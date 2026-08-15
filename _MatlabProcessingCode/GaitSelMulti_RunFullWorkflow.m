@@ -52,7 +52,7 @@ GaitSelMulti_BatchProcess();
 % here rather than in the per-step measures.
 GaitSelMulti_ExportTidyCSV();
 
-%% STEP 4 (MATLAB) — QC gate + steadiness (REQUIRED; single source of truth)
+%% STEP 4 (MATLAB) — QC gate + steadiness (REQUIRED)
 % Work-energy residual + duration-normalized drift -> step_qcpass.csv / stride_qcpass.csv;
 % net-CoM-energy steadiness -> step_steadiness.csv. The Dryad export and 02_clean.R both read
 % these, so the analyzed set has ONE definition.
