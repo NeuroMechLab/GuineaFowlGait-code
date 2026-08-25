@@ -6,7 +6,7 @@ function GaitSelMulti_QCGate()
 %       _RAnalysis/data/stride_qcpass.csv   (boutID, strideIndex, qcPass 0/1)
 %       _RAnalysis/data/step_steadiness.csv (boutID, stepIndex,   accClass)  QC-passed steps
 %
-%   These are the SINGLE SOURCE OF TRUTH for the analyzed set: GaitSelMulti_ExportDryad
+%   These are the SINGLE SOURCE OF TRUTH for the analyzed set: the data package
 %   embeds qcPass/steadiness in the per-trial files, and the R pipeline (02_clean.R) reads
 %   these flags rather than recomputing the gate, so the Dryad package, the mean traces,
 %   and every R figure share one definition.
@@ -23,7 +23,7 @@ function GaitSelMulti_QCGate()
 %   inherited by its two steps; a step with no QC-passed parent stride falls back to its own
 %   grade. Must match 02_clean.R.
 %
-%   See also: GaitSelMulti_ExportTidyCSV, GaitSelMulti_ExportDryad.
+%   See also: GaitSelMulti_ExportTidyCSV.
 
     WE_RELRESID_MAX = 0.20; DRIFT_MM = 45; STEADY_GRADE = 0.05; G = 9.81;
     P = projectPaths();

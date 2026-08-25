@@ -19,7 +19,7 @@ doi:10.5061/dryad.7m0cfxqc4. This repository is the code; the Dryad package is t
 contains the other, and the section below says how they meet.
 
 **Version:** `v1.1.0`, cut from the working repository at commit
-`33699e8b3952f3394da87c6606a034f130693cbb`. This repository keeps its revision history
+`65492fb228615a64f19fd1aa17a5bc011aceedc8`. This repository keeps its revision history
 from v1.0.0 forward: each release is tagged, and the commits between tags are the changes made
 since the version the paper cites.
 
@@ -33,11 +33,11 @@ looks for the output file that carries it, and `PIPELINE.md` says which script w
 
 ## Layout
 
-- `_MatlabProcessingCode/` the MATLAB phase: trial roster, import and filtering, whole-bout
+- `_MatlabProcessingCode/` the MATLAB phase, which runs from the Dryad package: whole-bout
   path-matched center-of-mass reconstruction, foot-contact gait-event detection, per-step and
-  per-stride measures, the tidy-table export, the quality-control gate, and the exporters that
-  build the Dryad package. `GaitSelMulti_RunFullWorkflow.m` is the master script and
-  `helpers/` holds the biomechanics kernels, including `PathMatchedDoubleIntegration.m`.
+  per-stride measures, the tidy-table export and the quality-control gate.
+  `GaitSelMulti_BatchFromDryad.m` is the entry point and `helpers/` holds the biomechanics
+  kernels, including `PathMatchedDoubleIntegration.m`.
 - `_RAnalysis/` the R phase, orchestrated by `run_all.R`: scripts `01` to `21`, numbered in the
   order they run. `lib_*.R` files hold shared definitions. Inputs in `data/`, the figures, tables and statistics the paper reports in
   `output/`, and validation products it does not report in `output_internal/`.
@@ -62,24 +62,34 @@ kept current.
 
 ## Running it
 
-The raw recordings are not in this repository. Download the Dryad package and place its
-`per_trial_timeseries/` where `projectPaths.m` looks, or point that function at your copy: it
-checks inside the project first and then one level above, so no path is hard-coded.
+Download the data package from Dryad, doi:10.5061/dryad.7m0cfxqc4. Unzip
+`per_trial_timeseries.zip` and `mean_stepcycle_by_gait_speed.zip` inside it, then put the package
+at `GaitSel_DryadPackage_AllGF/` beside `_MatlabProcessingCode/`. `projectPaths.m` finds it from
+its own location, so nothing needs editing.
 
-    matlab -batch "cd _MatlabProcessingCode; GaitSelMulti_RunFullWorkflow"
+    matlab -batch "addpath(genpath('_MatlabProcessingCode')); \
+        GaitSelMulti_BatchFromDryad; GaitSelMulti_ExportTidyCSV; \
+        GaitSelMulti_QCGate; GaitSelMulti_ExportCycleTraces"
+    cd _RAnalysis && Rscript run_all.R
 
-The master script runs the MATLAB phase and then hands off to R once. The quality-control gate is
-computed in MATLAB so the Dryad export can embed it and the R phase reads rather than redefines
-it, which is what keeps one definition of the analyzed set. Each `%%` block is independently
-re-runnable, and an import cache means the raw recordings are read only when it is rebuilt
-(`GaitSelMulti_BatchProcess(struct('useCache',false))`).
+The MATLAB phase re-runs the reconstruction, the gait-event detection and the per-step reduction
+from the deposited per-trial series, then writes the tidy tables and the quality-control gate the
+R phase reads. The gate is computed once, in MATLAB, so R reads rather than redefines it, which is
+what keeps one definition of the analyzed set.
 
-To run the R phase alone, from `_RAnalysis/`: `Rscript run_all.R`.
+Nothing writes into the data package. The re-run's outputs go to `rerun/` and
+`_MatlabProcessingCode/SavedResults/`, so a second run starts from the archived state.
 
-**One ordering note.** MATLAB STEP 5 embeds the gait and analysis-sample labels that R script
-`04` writes, so on a first build run the sequence through and then re-run STEP 5, and then R
-script `21` once more to restore the package's label columns. The full order is 1-5, 7, 5, 21.
-`PIPELINE.md` gives the reason and the check that it has been done.
+`rerun/reconstruction_check.csv` compares the re-run against the values the package carries for
+each trial. Over all 334 deposited trials it agrees to 0.000 mm on the vertical center-of-mass
+path and on the drift, to 0 on the work-energy identity ratio, and on the number of steps cut for
+every trial.
+
+The raw force-plate and marker recordings are not part of this release and are not needed. One
+column depends on them: `dutyLimb`, the plate-based duty-factor cross-check, comes back empty. The
+duty factor the paper reports is the marker-based one and is unaffected.
+
+To run the R phase alone, once `_RAnalysis/data/` has been written: `cd _RAnalysis && Rscript run_all.R`.
 
 `_RAnalysis/R/test_kernels.R` holds known-answer tests for the computations a reader cannot check
 by eye, including the shoelace signed area and its sign convention. It writes nothing and is not

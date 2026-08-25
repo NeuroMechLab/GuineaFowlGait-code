@@ -1,7 +1,7 @@
 # run_all.R — GF gait-selection R pipeline orchestrator (single hand-off from MATLAB).
 #
 # Run from _RAnalysis/:  Rscript run_all.R
-# Inputs, all written by the MATLAB phase (GaitSelMulti_RunFullWorkflow.m STEPS 1 to 5):
+# Inputs, all written by the MATLAB phase:
 #   data/perStep_long.csv, data/perStride_long.csv, data/morphology.csv   tidy measure tables
 #   data/step_qcpass.csv, data/stride_qcpass.csv, data/step_steadiness.csv   the QC gate
 #   data/cycleTracesStep.csv                                  per-step 100-point cycle traces

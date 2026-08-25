@@ -2,7 +2,7 @@ function B = GaitSel_ReconstructCoM(B, opts)
 %GAITSEL_RECONSTRUCTCOM  Whole-bout path-matched CoM reconstruction.
 %
 %   B = GaitSel_ReconstructCoM(B) reconstructs the center-of-mass trajectory for
-%   an imported bout struct B (from GaitSelMulti_ImportBout) by F = m a and double
+%   a bout struct B by F = m a and double
 %   integration, with the integration constants path-matched to the marker CoM
 %   proxy over the WHOLE bout at once (one [pos0; vel0; accelOffset] per axis,
 %   not per stride). Vertical is axis 3.

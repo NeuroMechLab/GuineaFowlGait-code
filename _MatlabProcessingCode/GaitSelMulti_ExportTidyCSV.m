@@ -12,7 +12,7 @@ function [S, T] = GaitSelMulti_ExportTidyCSV()
 %   sqrt(g L0), work = m g L0, Froude = v^2/(g L0). Study/dataset/colourCode
 %   columns pass through unchanged.
 %
-%   See also: GaitSelMulti_BatchProcess, GaitSelMulti_ExportDryad.
+%   See also: GaitSelMulti_QCGate.
 
     P = projectPaths(); addpath(P.helpers); g = 9.81;
     load(fullfile(P.saved,'perStepMeasures_multi.mat'),'S','T','massBird');

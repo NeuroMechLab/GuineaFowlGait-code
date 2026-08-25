@@ -151,7 +151,7 @@ All values are in SI units and in the bird-centered frame described under Coordi
 | `com_ml_m`    | m     | Reconstructed CoM medio-lateral position                                |
 | `com_fa_m`    | m     | Reconstructed CoM fore-aft position                                     |
 | `com_vt_m`    | m     | Reconstructed CoM vertical position                                     |
-| `comProxy_ml_m` | m   | Kinematic CoM proxy, medio-lateral (mean of the cranial and caudal back markers) |
+| `comProxy_ml_m` | m   | Kinematic CoM proxy, medio-lateral: the cranial and caudal back-marker midpoint with the per-session CoM offset applied (see Reconstruction method) |
 | `comProxy_fa_m` | m   | Kinematic CoM proxy, fore-aft                                           |
 | `comProxy_vt_m` | m   | Kinematic CoM proxy, vertical                                           |
 | `comVel_ml_ms`  | m/s | CoM medio-lateral velocity                                              |
@@ -433,7 +433,9 @@ Step 5 reads the label table that step 6 writes, so `steps_index.csv` carries th
 
 ### Reconstruction method
 
-The CoM is reconstructed by path-matched double integration of the ground reaction force over the whole on-plate bout: $F = ma$, with one set of integration constants per axis (initial position, initial velocity and an acceleration-baseline offset) fitted to minimise departure from the kinematic CoM proxy, the mean of the cranial and caudal back markers. The net force is low-pass filtered at 50 Hz with a zero-phase Butterworth filter. The analysis window for each trial is found automatically as the span where the bird is both tracked and on the plates. Because the two rig generations mount their plates differently relative to the motion-capture frame, the horizontal force axes are assigned to anatomical fore-aft and medio-lateral by matching the cumulative horizontal impulse to the kinematic travel direction, using a consensus across each collection date.
+The CoM is reconstructed by path-matched double integration of the ground reaction force over the whole on-plate bout: $F = ma$, with one set of integration constants per axis (initial position, initial velocity and an acceleration-baseline offset) fitted to minimise departure from the kinematic CoM proxy. The net force is low-pass filtered at 50 Hz with a zero-phase Butterworth filter. The analysis window for each trial is found automatically as the span where the bird is both tracked and on the plates. Because the two rig generations mount their plates differently relative to the motion-capture frame, the horizontal force axes are assigned to anatomical fore-aft and medio-lateral by matching the cumulative horizontal impulse to the kinematic travel direction, using a consensus across each collection date.
+
+The proxy is the midpoint of the cranial and caudal back markers, which lies above and behind the whole-body CoM, so a fore-aft and a vertical offset are applied to it before any geometry is taken. The fore-aft offset is fitted by driving the net pitch impulse about the CoM to zero over stride-complete windows, within anatomical bounds set by the two back markers. That condition does not identify the vertical offset, because the fore-aft impulse of the summed force approaches zero over a whole stride, so the vertical offset is set from anatomical scaling as $-0.2625\,L_\mathrm{iso}$ with $L_\mathrm{iso} = 0.20\,m^{1/3}$. Offsets are fitted for each bird in each recording session, because marker placement was renewed at each session. `comProxy_*` in the per-trial series carries them, so leg length, leg angle and CoM height above the foot all refer to one CoM. Energy fluctuations are unaffected, because a constant shift cancels in a height change.
 
 Reconstruction quality per study, as median work-energy identity $r$ and median vertical drift: RVC 0.98 and 7.8 mm, DropVsPothole 1.00 and 7.5 mm, Surface 0.96 and 4.9 mm.
 

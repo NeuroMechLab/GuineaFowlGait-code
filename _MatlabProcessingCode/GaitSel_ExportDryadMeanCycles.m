@@ -8,7 +8,7 @@ function GaitSel_ExportDryadMeanCycles(opts)
 %   (fore-aft, vertical), and CoM energies (kinetic, potential, total; in J and
 %   dimensionless /(m g L0)). Written as mean_cycles.mat and mean_cycles.csv.
 %
-%   Built from the per-trial files written by GaitSelMulti_ExportDryad. Uses the
+%   Built from the per-trial files of the data package. Uses the
 %   STEADY steps only (the clean cyclic set); each step is resampled to 100 points.
 %   Axis order of any 3-vector is [medio-lateral, fore-aft, vertical].
     if nargin < 1, opts = struct(); end

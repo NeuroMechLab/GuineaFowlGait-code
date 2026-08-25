@@ -18,7 +18,7 @@ function C = GaitSel_FootContacts(B, opts)
 %   GaitSel_DetectGaitEvents. The union of the contacts is reported against the force grounded
 %   fraction as a consistency check (they should agree).
 %
-%   The foot markers are on the force time base (GaitSelMulti_ImportBout resamples
+%   The foot markers are on the force time base (the bout assembly resamples
 %   them), so contacts align with the reconstructed CoM and events.
 %
 %   opts: .zTolM (contact height band, default 0.03 m), .minContactMs (default 40),
@@ -36,7 +36,7 @@ function C = GaitSel_FootContacts(B, opts)
     minC = round(getOpt(opts,'minContactMs',40)/1000 * fHz);
     bridgeN = round(getOpt(opts,'bridgeMs',20)/1000 * fHz);   % close short in-contact dropouts
 
-    % The foot tracks arrive already spike-cleaned from GaitSelMulti_ImportBout, so they are
+    % The foot tracks arrive already spike-cleaned with the bout, so they are
     % thresholded as they are. Cleaning again here would low-pass the height a second time and
     % put the contact detector on a different signal from the virtual leg and the stored series.
     zR = B.footR(:,3);
@@ -83,7 +83,7 @@ function runs = contiguousRuns(b, minLen, bridgeN)
     runs = [s(keep) e(keep)];
 end
 
-% Foot-track cleaning happens once, in GaitSelMulti_ImportBout, via cleanFootTrack. Every
+% Foot-track cleaning happens once, when the bout is assembled. Every
 % consumer therefore sees identical feet: this detector, the virtual-leg geometry in
 % GaitSel_PerStepStrideMeasures, the CoM-offset fit, and the published per-trial series.
 

@@ -1,104 +1,70 @@
 # Pipeline order and output map
 
-Every figure, table and number in the paper comes from the sequence below. Scripts are numbered
-in the order they run, and the number is the order: MATLAB `STEP 1` to `STEP 7`, then R `01` to
-`21`. Run the whole thing from
-`_MatlabProcessingCode/GaitSelMulti_RunFullWorkflow.m`, which ends by calling the R phase.
+Every figure, table and number in the paper comes from the sequence below, and the whole of it
+runs from the Dryad data package. Scripts are numbered in the order they run: the MATLAB phase,
+then R `01` to `21`.
 
-## Requirements
+## What you need
+
+The data package, from Dryad at doi:10.5061/dryad.7m0cfxqc4. Unzip `per_trial_timeseries.zip` and
+`mean_stepcycle_by_gait_speed.zip` inside it, then put the package at `GaitSel_DryadPackage_AllGF/`
+beside `_MatlabProcessingCode/`. `projectPaths.m` locates it from its own file location, so no path
+needs editing.
 
 MATLAB R2019b or later with the Statistics, Signal Processing and Curve Fitting toolboxes. R 4.6.0
-with dplyr, ggplot2, patchwork, readr, mgcv, cluster, openxlsx and knitr. The raw force and marker
-files in the `LEVEL_collation` archive are needed only to rebuild the import cache in STEP 2; see
-Locating the raw archive below for where it is kept.
+with dplyr, tidyr, ggplot2, patchwork, readr, mgcv, cluster, openxlsx and knitr; systemfonts is
+used if present and skipped if not.
 
-## Phase 0: the centre-of-mass offsets, in the shared core
+The raw force-plate and marker recordings are not part of this release and are not needed. The
+deposited per-trial series carry the net ground reaction force, the time base, the kinematic
+centre-of-mass proxy, both foot marker tracks, and body mass, leg length and g, which is
+everything the measurement kernels read.
 
-This runs BEFORE the guinea fowl pipeline and lives outside this project, because the offsets are
-fitted once for the whole archive and consumed by all three projects. It needs re-running only when
-the roster, the mass records or the reconstruction change.
+## MATLAB phase: the deposited trials to tidy tables
 
-| Step | Script | Writes |
-|:--|:---|:---|
-| 0a | `AvianGaitCore/matlab/runFitComOffsets.m` | `LEVEL_collation/_metadata/CoM_offsets_fitted.csv`, `_PilotRun/comOffsetValidation/` |
-| 0b | `AvianGaitCore/matlab/buildMorphologyOffsetTable.m` | `LEVEL_collation/_metadata/Morphology_offsets_lengths.csv` |
+| Step | Script | Reads | Writes |
+|:--|:---|:---|:---|
+| 1 | `GaitSelMulti_BatchFromDryad.m` | the package's `per_trial_timeseries/` and `morphology_multi.csv` | `SavedResults/perStepMeasures_multi.mat`, `data/perStep_raw_multi.csv`, `data/perStride_raw_multi.csv`, `rerun/reconstruction_check.csv` |
+| 2 | `GaitSelMulti_ExportTidyCSV.m` | `SavedResults/perStepMeasures_multi.mat` | `data/perStep_long.csv`, `perStride_long.csv`, `morphology.csv` (and the `_multi` names) |
+| 3 | `GaitSelMulti_QCGate.m` | the tidy tables | `data/step_qcpass.csv`, `stride_qcpass.csv`, `step_steadiness.csv` |
+| 4 | `GaitSelMulti_ExportCycleTraces.m` | the package's `per_trial_timeseries/` | `data/cycleTracesStep.csv` |
 
-Step 0a fits the offset per bird-session from the net-zero pitch-impulse condition over whole strides, and
-runs with the offsets disabled because it is fitting them. Method and rationale:
-`_Documentation/PITCH_CORRECTION_METHOD.md`. Its validation figures need a person to look at them,
-because the failure mode is anatomically implausible output rather than an error.
+Step 1 rebuilds each trial into the bout struct the kernels expect and runs the same three of
+them the paper used: `GaitSel_ReconstructCoM` for the path-matched double integration,
+`GaitSel_DetectGaitEvents` with `GaitSel_FootContacts` to cut steps at foot-marker touchdowns, and
+`GaitSel_PerStepStrideMeasures` for the per-step and per-stride reduction. `helpers/` holds the
+kernels those three call, including `PathMatchedDoubleIntegration.m`.
 
-Add the core to the path with `coreOnPath(projectDir)`, never with a hand-ordered `addpath`. This
-project vendors its own copy of five kernels, and whichever directory is added last wins.
+Nothing writes into the data package. Step 1's outputs go to `rerun/` and `SavedResults/`, so a
+second run starts from the archived state rather than from the first run's results.
 
-## MATLAB phase: raw files to tidy tables
+`rerun/reconstruction_check.csv` compares the re-run against the values the package carries for
+the same trial: the vertical centre-of-mass path, the drift, the work-energy identity ratio and the
+number of steps cut. Over all 334 deposited trials it agrees to 0.000 mm on the CoM path and the
+drift, to 0 on the work-energy ratio, and on the step count for every trial.
 
-Run order is fixed by the dependency chain. The quality-control gate is computed here, once, so
-that the data package can embed it and the R phase can read it rather than redefine it.
+One column cannot be reproduced from the package. `dutyLimb`, the plate-based duty-factor
+cross-check, is estimated from the per-plate vertical force, which is not deposited, so it comes
+back empty. The duty factor the paper reports is the marker-based one and is unaffected.
 
-STEP 2 reads `CoM_offsets_fitted.csv` and applies the offset for that trial's bird-session where the
-CoM proxy is built, so **the import cache must be rebuilt (`useCache=false`) after any change to the
-offsets**. It also derives body mass per bird-session from the force record. STEP 3 derives L0 as
-the median touchdown leg length over the bird-session's non-aerial steps, falling back to that
-bird's sessions pooled and then to a within-sample allometry; `morphology.csv` records which branch
-set each value.
+The quality-control gate is computed in MATLAB, once, in step 3, so the R phase reads it rather
+than redefining it. That is what keeps one definition of the analyzed set.
 
-Body mass, L0 and the CoM offset all key on one session key, `birdCode|YYYY-MM`. Month resolution
-separates every guinea fowl session, since no bird was recorded on two dates within a month.
+## Running it
 
-| Step | Script | Writes |
-|:--|:---|:---|
-| 1 | `GaitSelMulti_BuildRoster.m` | `_RAnalysis/data/trialRoster_multi.csv` (334 trials) |
-| 2 | `GaitSelMulti_BatchProcess.m` | `SavedResults/perStepMeasures_multi.mat`, `perStep_raw_multi.csv`, `perStride_raw_multi.csv` |
-| 3 | `GaitSelMulti_ExportTidyCSV.m` | `data/perStep_long.csv`, `perStride_long.csv`, `morphology.csv` |
-| 4 | `GaitSelMulti_QCGate.m` | `data/step_qcpass.csv`, `stride_qcpass.csv`, `step_steadiness.csv` |
-| 5 | `GaitSelMulti_ExportDryad.m` | Dryad `per_trial_timeseries/`, `trial_index.csv`, `steps_index.csv` |
-| 5 | `GaitSelMulti_ExportCycleTraces.m` | `data/cycleTracesStep.csv` |
-| 5 | `GaitSel_ExportDryadMeanCycles.m` | Dryad `mean_stepcycle_by_gait_speed/mean_cycles.{csv,mat}` |
-| 6 | (QC diagnostic figures) | not part of this bundle; the workflow's `isfolder` guard skips the step |
-| 7 | `_RAnalysis/run_all.R` | the R phase below |
+    matlab -batch "addpath(genpath('_MatlabProcessingCode')); \
+        GaitSelMulti_BatchFromDryad; GaitSelMulti_ExportTidyCSV; \
+        GaitSelMulti_QCGate; GaitSelMulti_ExportCycleTraces"
+    cd _RAnalysis && Rscript run_all.R
 
-Supporting kernels live in `_MatlabProcessingCode/helpers/`: `PathMatchedDoubleIntegration.m` (the
-center-of-mass reconstruction), `scaleByDimension.m` (dynamic-similarity normalization),
-`assembleForce.m` and `corrSafe.m` (fore-aft axis resolution), `filterForce.m`,
-`detectStepsAccelMin.m`, `cleanFootTrack.m` (foot-marker spike removal),
-`flagFreqLenOutliersSpeedLocal.m`, `flagSpeedDoubling.m` and `logMadFlag.m` (the outlier filters),
-and `resolveRawPath.m` (raw-file location, below). `cleanFootSignal.m` is the single-channel form
-of the same criterion and is not called by this pipeline.
+The R phase alone reproduces every figure, table and statistic once the four MATLAB steps have
+written `_RAnalysis/data/`. Running the whole sequence from the package gives 3842 detected steps
+and 1678 strides, 2620 steps and 1129 strides through the quality-control gate, and an analysis
+sample of 2580 steps and 944 strides over 243 trials, which is what the paper reports.
 
-Foot-marker tracks are spike-cleaned once, in `GaitSelMulti_ImportBout`, so the contact detector,
-the virtual-leg geometry, the CoM-offset fit and the published per-trial series all measure the
-same feet. Nothing downstream cleans them again.
-
-### Locating the raw archive
-
-`LEVEL_collation` is a shared multi-species archive, 3.6 GB over 9703 files, holding the raw
-recordings for the guinea fowl collections and for the ostrich series the parallel projects use.
-It is kept one level above this project so those projects read the same copy. `projectPaths`
-searches for it under the project root and then one level above, accepting a candidate only if it
-holds `OtherSpecies_byDate/Guinea fowl`, so either arrangement works. It reports the result as `P.collation`, empty when neither
-confirms, since most of the pipeline runs from the tidy tables and never touches the raw files.
-STEP 1 and the importer raise their own error naming both candidates.
-
-The roster records every raw file by its path relative to `LEVEL_collation`, and `resolveRawPath`
-rejoins it at read time to whichever location confirmed. Nothing stores an absolute path, so the
-roster is portable and carries no home directory. `resolveRawPath` also accepts a project-relative
-path and an absolute one, using the latter as given when it exists and otherwise re-resolving it
-from its `LEVEL_collation` segment, which is what makes a roster built on another machine work
-here.
-
-STEP 5(a) reads `data/step_labels_analysis.csv`, which R script 04 writes, so `steps_index.csv`
-carries the gait and analysis-sample columns only after STEP 5 has been re-run following the R
-phase. On a first build, run the sequence through, then re-run STEP 5.
-
-That second STEP 5 REVERTS two package files, so one more step closes the loop. STEP 5(a) copies
-the tidy tables in as `perStep_long_multi.csv` and `perStride_long_multi.csv`, which drops the
-label columns R script 21 adds, so script 21 runs again after it. The full order is 1-5, 7, 5, 21.
-Script 21 is idempotent, building from `data/` rather than mutating the package copies, so the
-repeat is safe. To check: `gait4` present in the package's `perStep_long_multi.csv` means the
-relabel has run; absent means it has not. STEP 5(c) additionally reads
-`output/speedbin_thresholds_R.csv` from the R phase and errors rather than guessing if it is
-missing, so the package's mean cycles are binned on the same slow/fast threshold as the figures.
+`GaitSel_ExportDryadMeanCycles.m` rebuilds the package's own `mean_stepcycle_by_gait_speed/` from
+the per-trial series. It reads `output/speedbin_thresholds_R.csv`, so it runs after the R phase,
+and it is only needed to regenerate that part of the package.
 
 ## R phase: tidy tables to figures, tables and statistics
 

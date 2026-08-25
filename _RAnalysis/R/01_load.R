@@ -11,7 +11,7 @@ morph      <- readr::read_csv(file.path(DATA_DIR, "morphology.csv"),     show_co
 # the same individuals within a cohort, so the statistical random effect groups them: the RVC
 # 2008-2009 collection is one cohort of birds, and the two 2012 Blum studies (Feb and June) are
 # the same cohort. The bird the June 2012 records label `noc`, carrying no colour band, is the
-# blue bird; GaitSelMulti_BuildRoster/individualCode carries the identification and the two
+# blue bird; the roster's individualCode carries the identification and the two
 # records that establish it, and sets colourCode here.
 add_subject <- function(df) {
   cohort <- ifelse(grepl("RVC", df$study), "rvc", "blum12")

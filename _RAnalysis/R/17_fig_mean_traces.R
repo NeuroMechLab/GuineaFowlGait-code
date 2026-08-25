@@ -58,7 +58,10 @@ if (is.null(meanTraces)) { cat("17_fig_mean_traces: no mean traces available.\n"
     tidyr::pivot_longer(all_of(TAB_ROWS), names_to = "row", values_to = "val") %>%
     mutate(ypos = length(TAB_ROWS) - match(row, TAB_ROWS) + 1)
 
-  make_fig <- function(cls, outname) {
+  # The KE and PE key sits in whichever corner of the energy row that figure leaves empty:
+  # bottom right for the steady and accelerating traces, top right for the decelerating ones,
+  # whose kinetic-energy trace falls through the bottom right of the fastest column.
+  make_fig <- function(cls, outname, key_x = 0.99, key_y = 0.02, key_just = c(1, 0)) {
     d <- MT %>% filter(grp == cls)
     if (!nrow(d)) { cat(sprintf("  (no traces for %s)\n", cls)); return(invisible()) }
     cols <- intersect(colLevels, unique(d$frbin))
@@ -89,7 +92,7 @@ if (is.null(meanTraces)) { cat("17_fig_mean_traces: no mean traces available.\n"
       XBRK + facet_grid(. ~ frbin, scales = "free_x") +
       labs(x = "time (ms)", y = LAB_ENERGY_2L) + theme_bio(BASE) +
       theme(strip.text = element_blank(), strip.background = element_blank()) + GAP +
-      bio_inset_legend(0.99, 0.02, base_size = BASE)
+      bio_inset_legend(key_x, key_y, just = key_just, base_size = BASE)
 
     # The speed-and-sample-size table. It is a facet_grid over the same column factor as the
     # trace panels, so patchwork aligns each cell under the group it describes; the row names
@@ -117,5 +120,5 @@ if (is.null(meanTraces)) { cat("17_fig_mean_traces: no mean traces available.\n"
   cat("11_fig_meantraces (by gait x speed bin):\n")
   make_fig("steady",       "Fig7_MeanTraces_Steady")
   make_fig("accelerating", "SFig_MeanTraces_Accel")
-  make_fig("decelerating", "SFig_MeanTraces_Decel")
+  make_fig("decelerating", "SFig_MeanTraces_Decel", key_y = 0.98, key_just = c(1, 1))
 }
