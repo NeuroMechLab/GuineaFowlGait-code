@@ -54,7 +54,7 @@ source("R/10_fig_gaitspace_planes.R")# Fig. 2  output/Fig2_GaitSpace.{pdf,png}
                                    #   output/gaitspace_figure_stats.csv
 source("R/11_fig_energy_exchange.R")# Fig. 4  output/Fig4_MetricMapping_Steady.{pdf,png}
                                    #   output/energy_exchange_stats.csv, collision_cot_relationship.csv,
-                                   #   output/hodoarea_cot_relationship.csv
+                                   #   output/hodoarea_cot_relationship.csv, fig4_axis_clipping.csv
                                    #   output_internal/energy_exchange_within_bird.csv
 source("R/12_hodograph_validation.R")# rotation sense tested against the classification
                                    #   output/hodo_validation_by_gait.csv, hodo_validation_boundary.csv
@@ -65,7 +65,7 @@ source("R/13_fig_rotation_sense.R")# Fig. 3  output/Fig3_RotationSense.{pdf,png}
                                    #   output_internal/hodoArea_recomputation_check.csv,
                                    #   output_internal/hodograph_rotation_model_note.txt
 source("R/14_fig_hodographs.R")    # Fig. 5  output/Fig5_SteadyHodographs.{pdf,png}
-                                   #   output/fig4_rotation_sense_observed.csv
+                                   #   output/fig4_rotation_sense_observed.csv, fig5_loop_closure.csv
 source("R/15_sfig_trial_sequence.R")# Fig. S4  output/SFig_TrialSequence.{pdf,png}
                                    #   output/trial_sequence_candidates.csv,
                                    #   output/trial_sequence_strides.csv

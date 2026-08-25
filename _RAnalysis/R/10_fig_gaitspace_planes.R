@@ -105,7 +105,7 @@ readr::write_csv(
 
 # ---- panels -----------------------------------------------------------------------------
 SPEED_RAMP <- c("#3D4A5C", "#1C9DA8", "#C0398B", "#D9A23B")
-PT <- list(geom_point(alpha = 0.55, size = 1.1), theme_daley())
+PT <- list(geom_point(alpha = 0.55, size = 0.8), theme_bio())
 refline <- function(v, fn) if (v %in% names(REFLINE))
   fn(REFLINE[[v]], linetype = 3, colour = "grey55", linewidth = 0.3) else NULL
 
@@ -128,11 +128,14 @@ pB <- ggplot(d_speed, aes(PC1, PC2, colour = meanSpeed_n)) + PT + pc_ann + by_sp
 pC <- ggplot(d_rot, aes(.data[[cx]], .data[[cy]], colour = rot)) + PT + desc_ann + by_rot
 pD <- ggplot(d_rot, aes(PC1, PC2, colour = rot)) + PT + pc_ann + by_rot
 
-fig <- (pA | pB) / (pC | pD) + plot_layout(guides = "collect") +
+# Each top panel is drawn on the same x range as the panel beneath it, so the axis is carried
+# once by the lower row and the two rows sit together.
+fig <- (pA + bio_drop_x() | pB + bio_drop_x()) / (pC | pD) +
+  plot_layout(guides = "collect") +
   plot_annotation(tag_levels = "A") &
-  theme(legend.position = "right", legend.box = "vertical")
-ggsave("output/Fig2_GaitSpace.pdf", fig, width = 10, height = 7.2, device = cairo_pdf)
-ggsave("output/Fig2_GaitSpace.png", fig, width = 10, height = 7.2, dpi = 300, bg = "white")
+  theme(legend.position = "right", legend.box = "vertical",
+        legend.key.height = unit(22, "pt"), legend.key.width = unit(7, "pt"))
+bio_save("Fig2_GaitSpace", fig, width = BIO_W2, height = 4.9)
 
 cat(sprintf("10_fig_gaitspace_planes: %d steps, %d individuals; PC1 %.1f%%, PC2 %.1f%%.\n",
             nrow(d), n_distinct(d$subjectID), ve[1], ve[2]))

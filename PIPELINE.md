@@ -207,3 +207,22 @@ methods decision or a reviewer response. One
 subdirectory sits alongside them, `dryad_readme_blocks/`, holding the three counted blocks that
 the data package's README quotes, so that README can be rebuilt from the pipeline's own outputs
 rather than hand-edited.
+
+## Figure sizes
+
+Every figure is exported at the width it is printed at, single column 88 mm or double column
+183 mm, within a 210 mm height bound, as a vector PDF for the journal and a 300 dpi PNG for the
+built manuscript. `bio_save()` in `lib_theme.R` writes both and refuses a canvas outside those
+bounds; `BIO_W1`, `BIO_W2`, `BIO_HMAX`, `BIO_BASE` and `BIO_TAG` beside it are the specification,
+and `theme_bio()` sets Arial at 8 pt with 12 pt bold capital panel tags.
+
+Exporting at the printed width is what makes a nominal point size the printed point size. A canvas
+wider than the placed width shrinks every label by the ratio between the two, so changing a
+figure's width means changing the type size with it unless `bio_save()` is given the printed
+width.
+
+Two helpers carry the shared-axis layout. `bio_drop_x()` removes the tick labels, title and ticks
+from a panel whose x axis is carried by the panel below it, which is what lets stacked rows sit
+together; apply it only where the panels are drawn on the same x range, which for these figures is
+set by a common `coord_cartesian(xlim = ...)`. `bio_inset_legend()` places a key inside the panel
+in normalized coordinates.

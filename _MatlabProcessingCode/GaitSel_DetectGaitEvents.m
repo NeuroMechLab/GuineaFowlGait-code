@@ -5,50 +5,41 @@ function E = GaitSel_DetectGaitEvents(B, opts)
 %   and derives its stance / flight structure. Steps are cut at foot-marker
 %   touchdowns (GaitSel_FootContacts), so each cycle starts at foot contact
 %   (0 % = touchdown): running shows a single centred stance peak and walking its
-%   double hump. When fewer than three foot contacts are found, the cut falls back
-%   to the fore-aft CoM-acceleration braking minima (detectStepsAccelMin), a
-%   gait-agnostic force/kinematics landmark. E.stepMethod records which was used.
+%   double hump. Touchdowns less than 30 ms apart are counted once. Cutting a step
+%   needs at least three touchdowns; a bout with fewer returns an empty E.stepIdx
+%   and contributes no steps or strides. E.nFootTD records the count.
 %
 %   The grounded/aerial structure comes from the summed vertical force: flight is
 %   where it falls below a small fraction of body weight. Per-limb duty factor and
 %   contact periods come from the foot-marker contacts (GaitSel_FootContacts).
 %
-%   E fields: stepIdx (cut samples used), stepMethod, stepPeriod, flightTime,
+%   E fields: stepIdx (cut samples used), nFootTD, stepPeriod, flightTime,
 %   groundedFrac, hasFlight, stanceOn, stanceOff, dutyLimb (plate estimate),
-%   dutyMarker (per-limb from markers), contactTimeMarker, footC, accelIdx, threshN.
+%   dutyMarker (per-limb from markers), contactTimeMarker, footC, threshN.
 %
-%   opts: .flightThreshFrac (0.10 of BW), .minPeakProminence and .minStepMs (90)
-%   for the accel-min fallback; foot-contact opts are forwarded to GaitSel_FootContacts.
+%   opts: .flightThreshFrac (0.10 of BW); foot-contact opts are forwarded to
+%   GaitSel_FootContacts.
 %
-%   See also: GaitSel_FootContacts, detectStepsAccelMin, GaitSel_PerStepStrideMeasures.
+%   See also: GaitSel_FootContacts, GaitSel_PerStepStrideMeasures.
 
     if nargin < 2, opts = struct(); end
     g = 9.81; BW = B.mass*g; fHz = B.fHz; t = B.time;
     thr = getOpt(opts,'flightThreshFrac',0.10)*BW;
 
-    % --- foot-marker contacts (per-limb; also the primary cycle-cut source) ---
+    % --- foot-marker contacts (per-limb; and the cycle-cut source) -------
     C = GaitSel_FootContacts(B, opts);
 
-    % --- accel-minimum landmarks (fallback when < 3 foot contacts) -------
-    aFA = filterForce(B.comAcc(:,2), fHz, struct('CutoffHz',20));
-    prom = getOpt(opts,'minPeakProminence', 0.5*std(aFA,'omitnan'));
-    minStep = getOpt(opts,'minStepMs',90)/1000;
-    [accelIdx, sd] = detectStepsAccelMin(aFA, fHz, ...
-        struct('minPeakProminence',prom, 'minCycleSec',minStep));
-
-    % --- choose the cycle-cut points -------------------------------------
+    % --- cycle-cut points, from the foot-marker touchdowns ---------------
     footTD = sort(C.td(:));
     if ~isempty(footTD)                       % strictly increasing, no degenerate
         keep = [true; diff(footTD) >= round(0.03*fHz)];   % touchdowns >= 30 ms apart
         footTD = footTD(keep);
     end
-    useFoot = numel(footTD) >= 3;
-    if useFoot, stepIdx = footTD; else, stepIdx = accelIdx(:); end
+    if numel(footTD) < 3, footTD = zeros(0,1); end   % too few to cut a step
+    stepIdx      = footTD;
     E.stepIdx    = stepIdx;
-    E.stepMethod = string(char(iff(useFoot,'footTD','accelMin')));
-    E.accelIdx   = accelIdx(:);
+    E.nFootTD    = numel(footTD);
     E.footC      = C;
-    E.brakeProm  = prom; E.accelOut = sd;
 
     % --- grounded / flight from summed vertical force --------------------
     Fz = filterForce(B.force(:,3), fHz, struct('CutoffHz',30));
@@ -107,10 +98,6 @@ function dl = perLimbDuty(B, stepIdx, thr, BW, fHz)
         inStep = mid >= stepIdx(k) & mid < stepIdx(k+1);
         if any(inStep), dl(k) = max((contacts(inStep,2)-contacts(inStep,1))/fHz) / strideP; end
     end
-end
-
-function out = iff(cond, a, b)
-    if cond, out = a; else, out = b; end
 end
 
 function v = getOpt(o,n,d)

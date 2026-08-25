@@ -13,11 +13,9 @@
 # column per group. A full row gives the four lines of numbers the page width they need to stay
 # legible at the printed size.
 #
-# Type size is set for the PAGE, not the canvas. The .docx and the PDF place this figure at
-# 5.833 in wide, so a font drawn on a 13 in canvas reaches the reader at 5.833/13 = 45% of its
-# nominal size: the 6.8 pt strip printed at 3 pt. FIG_W and PAGE_W below carry that ratio, and
-# BASE is set so the theme's nominal sizes land near 7 pt on the page. Changing FIG_W without
-# changing BASE silently rescales every label in the figure.
+# The canvas is exported at the width the figure is printed at, so a nominal point size is the
+# printed point size and the journal's 8 pt labelling is drawn at 8 pt. A canvas wider than the
+# placed width would shrink every label by the ratio between the two.
 suppressPackageStartupMessages({library(dplyr); library(tidyr); library(ggplot2); library(patchwork)})
 if (!exists("theme_daley")) source("R/lib_theme.R")
 if (!exists("meanTraces")) source("R/05_mean_traces.R")
@@ -30,10 +28,9 @@ if (is.null(meanTraces)) { cat("17_fig_mean_traces: no mean traces available.\n"
   # column order: gait (walk<grounded<aerial) then speed (slow<fast)
   colLevels <- as.vector(t(outer(GORD, SORD, paste, sep="|")))
 
-  # Page geometry, and the type size that follows from it (see the header note).
-  FIG_W  <- 13; FIG_H <- 9          # export canvas, inches
-  PAGE_W <- 5.8333333333333330      # placed width in the manuscript, inches
-  BASE   <- round(7 * FIG_W / PAGE_W)   # nominal pt that reaches the page at 7 pt
+  # Page geometry (see the header note): double-column width, and the journal's body type size.
+  FIG_W <- BIO_W2; FIG_H <- 5.0     # export canvas, inches
+  BASE  <- BIO_BASE
 
   # 05_mean_traces.R writes the per-cell summary over the EXACT steps behind each mean trace,
   # so the column label, the n and the Fr/u/v ranges describe the drawn curve rather than an
@@ -76,9 +73,9 @@ if (is.null(meanTraces)) { cat("17_fig_mean_traces: no mean traces available.\n"
       if (zero) p <- p + geom_hline(yintercept = 0, linetype = 3, colour = "grey55")
       p + XBRK + facet_grid(. ~ frbin, scales = "free_x",
                      labeller = if (strip) labeller(frbin = labmap) else label_value) +
-        labs(x = NULL, y = ylab) + theme_daley(base_size = BASE) +
-        theme(strip.text = if (strip) element_text(size = BASE) else element_blank(),
-              strip.background = element_blank(), axis.text = element_text(size = BASE * 0.9)) +
+        labs(x = NULL, y = ylab) + theme_bio(BASE) +
+        theme(strip.text = if (strip) element_text(size = BASE, face = "bold") else element_blank(),
+              strip.background = element_blank()) +
         GAP
     }
     pFz  <- panel("Fz_BW",  "vertical GRF (BW)", "#3D4A5C", strip=TRUE)
@@ -90,9 +87,9 @@ if (is.null(meanTraces)) { cat("17_fig_mean_traces: no mean traces available.\n"
       scale_colour_manual(values = c(KE="#0077BB", PE="#C0398B"), name=NULL) +
       scale_fill_manual(values = c(KE="#0077BB", PE="#C0398B"), name=NULL) +
       XBRK + facet_grid(. ~ frbin, scales = "free_x") +
-      labs(x = "time (ms)", y = LAB_ENERGY) + theme_daley(base_size = BASE) +
-      theme(strip.text = element_blank(), strip.background = element_blank(),
-            axis.text = element_text(size = BASE * 0.9)) + GAP
+      labs(x = "time (ms)", y = LAB_ENERGY_2L) + theme_bio(BASE) +
+      theme(strip.text = element_blank(), strip.background = element_blank()) + GAP +
+      bio_inset_legend(0.99, 0.02, base_size = BASE)
 
     # The speed-and-sample-size table. It is a facet_grid over the same column factor as the
     # trace panels, so patchwork aligns each cell under the group it describes; the row names
@@ -101,21 +98,21 @@ if (is.null(meanTraces)) { cat("17_fig_mean_traces: no mean traces available.\n"
       mutate(frbin = factor(col, levels = cols))
     pTab <- ggplot(td, aes(x = 0, y = ypos, label = val)) +
       geom_hline(yintercept = length(TAB_ROWS) + 0.55, colour = "grey80", linewidth = 0.4) +
-      geom_text(size = BASE * 0.352777778, family = .base_family) +
+      geom_text(size = BASE * 0.352777778, family = BIO_FONT) +
       facet_grid(. ~ frbin) +
       scale_x_continuous(limits = c(-1, 1), expand = c(0, 0)) +
       scale_y_continuous(breaks = seq_along(TAB_ROWS), labels = rev(TAB_ROWS),
                          limits = c(0.4, length(TAB_ROWS) + 0.7), expand = c(0, 0)) +
-      labs(x = NULL, y = NULL) + theme_daley(base_size = BASE) +
+      labs(x = NULL, y = NULL) + theme_bio(BASE) +
       theme(strip.text = element_blank(), axis.line = element_blank(),
-            axis.ticks = element_blank(), axis.text.x = element_blank(),
-            axis.text.y = element_text(size = BASE * 0.9)) + GAP
+            axis.ticks = element_blank(), axis.text.x = element_blank()) + GAP
 
-    fig <- (pFz / pFfa / pEn / pTab) +
-      plot_layout(guides = "collect", heights = c(1, 1, 1, 0.55))
-    ggsave(file.path("output", paste0(outname,".pdf")), fig, width = FIG_W, height = FIG_H, device = cairo_pdf)
-    ggsave(file.path("output", paste0(outname,".png")), fig, width = FIG_W, height = FIG_H, dpi = 300)
-    cat(sprintf("  %s: columns %s\n", outname, paste(cols, collapse=", ")))
+    # Every column draws its three rows on one time range, so the axis is carried by the energy
+    # row and the rows above it sit together. The KE and PE key sits inside that row.
+    fig <- (pFz + bio_drop_x()) / (pFfa + bio_drop_x()) / pEn / pTab +
+      plot_layout(heights = c(1, 1, 1, 0.55))
+    bio_save(outname, fig, width = FIG_W, height = FIG_H)
+    cat(sprintf("    columns %s\n", paste(cols, collapse=", ")))
   }
   cat("11_fig_meantraces (by gait x speed bin):\n")
   make_fig("steady",       "Fig7_MeanTraces_Steady")

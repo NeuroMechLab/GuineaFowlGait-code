@@ -20,7 +20,7 @@ if (!"outlier" %in% names(step_raw)) {
     ggplot(d, aes(.data[[var]], fill = o)) +
       geom_histogram(bins = 45, colour = NA) + scale_x_log10() +
       scale_fill_manual(values = ocol, labels = olab, name = NULL, drop = FALSE) +
-      labs(x = xlab, y = "count") + theme_daley()
+      labs(x = xlab, y = "count") + theme_bio()
   }
   pA <- hist_panel(step_raw,   "stepFreq",   "step frequency (Hz)")
   pB <- hist_panel(step_raw,   "stepLength", "step length (m)")
@@ -34,9 +34,11 @@ if (!"outlier" %in% names(step_raw)) {
     d <- flagf(df %>% filter(is.finite(meanSpeed_n), meanSpeed_n > 0,
                              is.finite(.data[[fvar]]), .data[[fvar]] > 0))
     ggplot(d, aes(meanSpeed_n, .data[[fvar]], colour = o)) +
-      geom_point(alpha = 0.55, size = 1.2) + scale_y_log10() +
+      geom_point(alpha = 0.55, size = 0.7) + scale_y_log10() +
       scale_colour_manual(values = ocol, labels = olab, name = NULL, drop = FALSE) +
-      labs(x = "dimensionless speed u", y = xlab) + theme_daley()
+      labs(x = "dimensionless speed u", y = xlab) + theme_bio() +
+      # One kept/removed key serves the whole figure; the histogram fill carries it.
+      guides(colour = "none")
   }
   pE <- speed_panel(step_raw,   "stepFreq",   "step frequency (Hz)")
   pF <- speed_panel(stride_raw, "strideFreq", "stride frequency (Hz)")
@@ -45,8 +47,10 @@ if (!"outlier" %in% names(step_raw)) {
   nStrOut  <- sum(stride_raw$outlier == 1, na.rm = TRUE)
   # No figure title or subtitle: the number and the description live in the caption only, so
   # they cannot drift out of step with the manuscript when figures are renumbered.
-  fig <- ((pA | pB) / (pC | pD) / (pE | pF)) + plot_layout(guides = "collect")
-  ggsave("output/SFig_OutlierFilter.pdf", fig, width = 9, height = 11, device = cairo_pdf)
-  ggsave("output/SFig_OutlierFilter.png", fig, width = 9, height = 11, dpi = 300)
+  # Each panel in a column carries a different measure on its own range, so every axis is
+  # labelled.
+  fig <- ((pA | pB) / (pC | pD) / (pE | pF)) + plot_layout(guides = "collect") +
+    plot_annotation(tag_levels = "A")
+  bio_save("SFig_OutlierFilter", fig, width = BIO_W2, height = 7.4)
   cat(sprintf("06_fig_outlier_filter: SFig_OutlierFilter (removed %d steps, %d strides; speed-conditional).\n", nStepOut, nStrOut))
 }

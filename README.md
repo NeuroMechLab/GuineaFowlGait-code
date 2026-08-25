@@ -10,16 +10,16 @@ phase. The rotation sense of the center-of-mass velocity loop, the hodograph, is
 criterion for the pendular-to-bouncing transition, against those features and against six
 established gait descriptors.
 
-**Paper:** Daley, M. A. and Birn-Jeffery, A. A velocity-loop view of avian gait: hodograph
-rotation sense characterizes the walking-to-running continuum in guinea fowl. *Biology Open*
-(submitted for review). The volume, article number and article DOI are added on acceptance.
+**Paper:** Daley, M. A. and Birn-Jeffery, A. (2026). A velocity-loop view of avian gait:
+hodograph rotation sense characterizes the walking-to-running continuum in guinea fowl.
+*Biology Open*, doi:10.1242/bio.062880
 
 **Data:** the recordings and the processed per-step and per-stride tables are archived on Dryad at
 doi:10.5061/dryad.7m0cfxqc4. This repository is the code; the Dryad package is the data. Neither
 contains the other, and the section below says how they meet.
 
-**Version:** `v1.0.0`, cut from the working repository at commit
-`6a8a77b72884ecf16528165500f15a25a9fabf74`. This repository keeps its revision history
+**Version:** `v1.1.0`, cut from the working repository at commit
+`33699e8b3952f3394da87c6606a034f130693cbb`. This repository keeps its revision history
 from v1.0.0 forward: each release is tagged, and the commits between tags are the changes made
 since the version the paper cites.
 
@@ -88,9 +88,9 @@ part of `run_all.R`.
 ## The analysis sample
 
 One gate, in `_RAnalysis/R/04_analysis_sample.R`: the MATLAB quality-control gate plus every
-gait-space descriptor defined, giving **2588 steps and 945 strides** of the 3961 steps and 1731
-strides detected, over 334 level trials from 30 recording sessions and 13 individuals. Nothing
-downstream filters again, so any count reported as a fraction of all steps has 2588 as its
+gait-space descriptor defined, giving **2580 steps and 944 strides** of the 3842 steps and 1678
+strides detected, over 323 level trials from 30 recording sessions and 13 individuals. Nothing
+downstream filters again, so any count reported as a fraction of all steps has 2580 as its
 denominator. The Dryad package carries an `analysisSample` flag that reproduces exactly that set,
 which is how a reader reproduces the paper's sample without rerunning the gate.
 
@@ -111,7 +111,7 @@ The Dryad package carries its own license terms for the data.
 Cite the paper. If you need to cite the code specifically, cite the archived release:
 
     Daley, M. A. and Birn-Jeffery, A. (2026). Guinea fowl gait selection: analysis code,
-    version v1.0.0. https://github.com/NeuroMechLab/GuineaFowlGait-code
+    version v1.1.0. https://github.com/NeuroMechLab/GuineaFowlGait-code
 
 ## Contact
 

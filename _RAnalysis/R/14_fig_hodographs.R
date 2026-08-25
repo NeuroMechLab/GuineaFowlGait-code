@@ -69,6 +69,26 @@ if (!file.exists(ctf)) { cat("14_fig_hodographs: cycleTracesStep.csv not found.\
   rotGait <- summarise_rot(steadyRot %>% group_by(gait)) %>% mutate(spd = "all", .after = gait)
   readr::write_csv(bind_rows(rotGait, rotObs), "output/fig4_rotation_sense_observed.csv")
 
+  # A mean loop closes only where the cell neither gains nor loses fore-aft velocity over the
+  # stride, so the gap between the first and last sample of each drawn loop is the cell's mean
+  # net speed change. Emitted with the cell's mean fore-aft acceleration and net CoM energy
+  # change, which give the same sign.
+  closure <- meanW %>% group_by(transClass) %>% arrange(phase, .by_group = TRUE) %>%
+    summarise(gap_fa   = last(vfa_c) - first(vfa_c),
+              gap_vert = last(vvert_n) - first(vvert_n),
+              gap      = sqrt(gap_fa^2 + gap_vert^2),
+              span_fa  = diff(range(vfa_c)), .groups = "drop") %>%
+    mutate(gap_pct_of_fa_span = 100 * gap / span_fa) %>%
+    left_join(steadyRot %>% mutate(transClass = paste(gait, spd, sep = "|")) %>%
+                group_by(transClass) %>%
+                summarise(n_strides = dplyr::n(),
+                          mean_accelForeAft_n = mean(accelForeAft_n, na.rm = TRUE),
+                          mean_W_CoM_net_n = mean(W_CoM_net_n, na.rm = TRUE), .groups = "drop"),
+              by = "transClass") %>%
+    mutate(across(where(is.numeric) & !n_strides, ~round(.x, 4))) %>%
+    arrange(desc(gap))
+  readr::write_csv(closure, "output/fig5_loop_closure.csv")
+
   # Panel label: gait, speed half and the observed majority rotation sense with the percentage
   # of strides turning that way, all read off the figure so the legend carries none of it.
   #
@@ -80,7 +100,7 @@ if (!file.exists(ctf)) { cat("14_fig_hodographs: cycleTracesStep.csv not found.\
   cellPct <- setNames(rotObs$pct_majority, key_of)
   celllab <- function(key) {
     g <- sub("\\|.*$", "", key); sp <- sub("^.*\\|", "", key)
-    sprintf("%s, %s\n%d%% %s",
+    sprintf("%s\n%s, %d%% %s",
             steadyLab[g], sp, cellPct[key], cellSns[key])
   }
   cellOrder <- key_of[order(rotObs$median_u)]
@@ -90,24 +110,24 @@ if (!file.exists(ctf)) { cat("14_fig_hodographs: cycleTracesStep.csv not found.\
   p4 <- ggplot(meanW, aes(vfa_c, vvert_n, colour = pctStride, group = facet)) +
     geom_hline(yintercept = 0, linetype = 3, colour = "grey70") +
     geom_vline(xintercept = 0, linetype = 3, colour = "grey70") +
-    geom_path(linewidth = 1.2) +
-    geom_point(data = start, aes(vfa_c, vvert_n), colour = "black", size = 2, inherit.aes = FALSE) +
+    geom_path(linewidth = 0.6) +
+    geom_point(data = start, aes(vfa_c, vvert_n), colour = "black", size = 1.0, inherit.aes = FALSE) +
     scale_colour_gradientn(colours = c("#3D4A5C","#1C9DA8","#C0398B","#D9A23B"),
                            name = "stride %", limits = c(0, 100)) +
-    scale_x_continuous(breaks = breaks3) + scale_y_continuous(breaks = breaks3) +
+    scale_x_continuous(breaks = breaks2) + scale_y_continuous(breaks = breaks3) +
     facet_wrap(~facet, nrow = 1) + coord_equal() +
     labs(x = LAB_FA_VEL, y = LAB_VERT_VEL) +
-    theme_daley() +
-    theme(strip.text = element_text(size = 8, lineheight = 1.0),
+    theme_bio() +
+    theme(strip.text = element_text(size = BIO_BASE, face = "bold", lineheight = 1.0),
           panel.background = element_rect(fill = "transparent", colour = NA),
           strip.background = element_rect(fill = "transparent", colour = NA),
-          panel.spacing = grid::unit(8, "pt"))
+          legend.key.height = unit(20, "pt"), legend.key.width = unit(7, "pt"),
+          strip.clip = "off", panel.spacing = grid::unit(5, "pt"))
   # coord_equal() fixes the panel aspect, so the canvas has to be sized to what the panels
   # actually occupy: a wider canvas pads them with blank rather than enlarging them, and the page
   # then scales the whole figure down. Re-measure the content bounding box if the panel count, the
   # legend or the axis labels change.
-  ggsave("output/Fig5_SteadyHodographs.pdf", p4, width = 8.7, height = 4.7, device = cairo_pdf)
-  ggsave("output/Fig5_SteadyHodographs.png", p4, width = 8.7, height = 4.7, dpi = 300, bg = "white")
+  bio_save("Fig5_SteadyHodographs", p4, width = BIO_W2, height = 3.15)
   cat(sprintf("14_fig_hodographs: Fig5_SteadyHodographs, stride-Hilbert, gait x speed (%s).\n",
               paste(sprintf("%s=%d", nstr$transClass, nstr$n), collapse = ", ")))
   print(as.data.frame(rotObs))

@@ -190,12 +190,15 @@ if (!file.exists(ctf)) { cat("13_fig_rotation_sense: cycleTracesStep.csv not fou
 
   xlab_u <- LAB_U
   # Panel A: signed area vs speed, coloured by gait, zero line = walk/run boundary
+  # The y title is set over two lines: at single-column width one line is longer than the
+  # panel is tall and the axis label is clipped.
   pA <- ggplot(sa, aes(meanSpeed_n, area, colour = gaitObjective, shape = gaitObjective)) +
     geom_hline(yintercept = 0, linetype = 3, colour = "grey70") +
-    geom_point(alpha = 0.6, size = 1.5) +
+    geom_point(alpha = 0.6, size = 0.9) +
     scale_color_gait() + scale_shape_gait() +
-    labs(x = xlab_u, y = expression("Hodograph signed area  " * italic(A)/(italic(g) * italic(L)[0]) * "   (CCW +, CW -)")) +
-    theme_daley()
+    labs(x = xlab_u, y = expression(atop("Hodograph signed area",
+                                         italic(A)/(italic(g) * italic(L)[0]) * "  (CCW +, CW -)"))) +
+    theme_bio() + bio_drop_x() + bio_inset_legend(0.99, 0.02)
   # Panel B: P(running-type) vs speed with the binomial-GAM fit + empirical bins. With the
   # expanded sample the empirical proportions are sampled more finely (~100 steps
   # per bin, up to 25 bins) so the fit can be judged against a denser summary; each
@@ -212,13 +215,13 @@ if (!file.exists(ctf)) { cat("13_fig_rotation_sense: cycleTracesStep.csv not fou
   }
   pB <- pB +
     geom_errorbar(data = emp, aes(u, ymin = lo, ymax = hi), width = 0, colour = "grey55", inherit.aes = FALSE) +
-    geom_point(data = emp, aes(u, p), size = 2.0, alpha = 0.85, inherit.aes = FALSE) +
+    geom_point(data = emp, aes(u, p), size = 1.2, alpha = 0.85, inherit.aes = FALSE) +
     labs(x = xlab_u, y = "P(running-type rotation)") +
-    theme_daley()
+    theme_bio()
 
-  fig <- (pA / pB) + plot_layout(guides = "collect") +
-    plot_annotation(tag_levels = "A")
-  ggsave("output/Fig3_RotationSense.pdf", fig, width = 7.5, height = 9, device = cairo_pdf)
-  ggsave("output/Fig3_RotationSense.png", fig, width = 7.5, height = 9, dpi = 300)
+  # Both panels are drawn on the same speed axis, which panel B carries for the pair. The gait
+  # key sits inside panel A, so the pair keeps the full single-column width for the data.
+  fig <- (pA / pB) + plot_annotation(tag_levels = "A")
+  bio_save("Fig3_RotationSense", fig, width = BIO_W1, height = 4.7)
   cat(sprintf("13_fig_rotation_sense: Fig3_RotationSense (%d steps).\n", nrow(sa)))
 }

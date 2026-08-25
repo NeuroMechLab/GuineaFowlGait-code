@@ -39,15 +39,14 @@ glab <- c(walk = "walk", groundedRun = "grounded run", aerialRun = "aerial run")
 d$gplot <- factor(glab[as.character(d$gaitObjective)], levels = glab)
 cen$gplot <- factor(glab[as.character(cen$gaitObjective)], levels = glab)
 p <- ggplot(d, aes(PC1, PC2, colour = accClass)) +
-  geom_point(alpha = 0.5, size = 1.2) +
-  geom_point(data = cen, aes(PC1, PC2, fill = accClass), shape = 21, size = 3.2,
+  geom_point(alpha = 0.5, size = 0.7) +
+  geom_point(data = cen, aes(PC1, PC2, fill = accClass), shape = 21, size = 2.0,
              colour = "black", stroke = 0.6, inherit.aes = FALSE) +
   scale_colour_manual(values = pal, name = "stride steadiness") +
   scale_fill_manual(values = pal, guide = "none") +
   facet_wrap(~gplot) +
   labs(x = sprintf("PC1 (%.0f%% of variance)", 100*v[1]),
        y = sprintf("PC2 (%.0f%% of variance)", 100*v[2])) +
-  theme_daley()
-ggsave("output/SFig_PCSteadiness.pdf", p, width = 10, height = 4, device = cairo_pdf)
-ggsave("output/SFig_PCSteadiness.png", p, width = 10, height = 4, dpi = 200, bg = "white")
+  theme_bio()
+bio_save("SFig_PCSteadiness", p, width = BIO_W2, height = 2.6)
 cat("18_sfig_pc_steadiness: wrote SFig_PCSteadiness.\n")

@@ -63,6 +63,8 @@ steady <- stride %>% filter(accClass == "steady")
 # ---- figure --------------------------------------------------------------
 # steadiness palette, deliberately distinct from the gait palette (navy/teal/magenta)
 pal <- c(decelerating = "#8E63A6", steady = "#555555", accelerating = "#E69F00")
+SPEED_RANGE <- range(stride$meanSpeed_n, na.rm = TRUE)
+SPEED_X     <- coord_cartesian(xlim = SPEED_RANGE)
 # Every panel is at STRIDE grain, because the criterion is evaluated per stride. Plotting strides
 # shows the criterion the paper actually uses.
 pA <- ggplot() +
@@ -70,15 +72,15 @@ pA <- ggplot() +
   geom_density(data = steady, aes(meanSpeed_n, after_stat(count), fill = "steady"), alpha = 0.55, colour = NA) +
   scale_fill_manual(values = c(full = "#B0B7C0", steady = "#3D4A5C"),
                     labels = c("all strides","steady only"), name = NULL) +
-  labs(x = xlab_u, y = "stride count (density-scaled)") + theme_daley()
+  labs(x = xlab_u, y = "stride count (density-scaled)") + SPEED_X + theme_bio()
 
 # B. the primary criterion itself: energy grade vs speed with the +/- band
 pB <- ggplot(stride, aes(meanSpeed_n, 100*fracEG, colour = accClass)) +
   geom_hline(yintercept = c(-100*STEADY_GRADE, 100*STEADY_GRADE), linetype = 3, colour = "grey50") +
-  geom_point(alpha = 0.5, size = 1.3) +
+  geom_point(alpha = 0.5, size = 0.8) +
   scale_colour_manual(values = pal, name = NULL) +
-  labs(x = xlab_u, y = "net CoM energy change per distance / body weight (%)") +
-  theme_daley()
+  labs(x = xlab_u, y = expression(atop("net CoM energy change per",
+                                      "distance / body weight (%)"))) + SPEED_X + theme_bio()
 
 # C. speed-neutrality of the criterion, stated positively: the fraction of steps excluded as
 # unsteady, in equal-count speed bins. A flat line is the property the Methods claim, that the
@@ -91,13 +93,17 @@ excl <- stride %>%
 readr::write_csv(excl %>% select(u, exclusion_pct = rate, n_strides = n),
                  "output/steadiness_exclusion_by_speed.csv")
 pC <- ggplot(excl, aes(u, rate)) +
-  geom_line(linewidth = 1, colour = "#1C9DA8") + geom_point(size = 2, colour = "#1C9DA8") +
-  ylim(0, 100) +
+  geom_line(linewidth = 0.7, colour = "#1C9DA8") + geom_point(size = 1.2, colour = "#1C9DA8") +
+  coord_cartesian(ylim = c(0, 100), xlim = SPEED_RANGE) +
   labs(x = xlab_u, y = "strides excluded as unsteady (%)") +
-  theme_daley()
+  theme_bio()
 
-fig <- (pA / pB / pC) + plot_layout(guides = "collect") +
-  patchwork::plot_annotation(tag_levels = "A")
-ggsave("output/SFig_Steadiness.pdf", fig, width = 7, height = 11, device = cairo_pdf)
-ggsave("output/SFig_Steadiness.png", fig, width = 7, height = 11, dpi = 300)
+# The three panels are drawn on one speed range, so panel C carries the axis for all of them.
+# The keys sit beneath the panels, which leaves the full single-column width for the data.
+fig <- (pA + bio_drop_x()) / (pB + bio_drop_x()) / pC +
+  plot_layout(guides = "collect") +
+  patchwork::plot_annotation(tag_levels = "A") &
+  theme(legend.position = "bottom", legend.box = "vertical",
+        legend.margin = margin(0, 0, 0, 0), legend.box.spacing = unit(3, "pt"))
+bio_save("SFig_Steadiness", fig, width = BIO_W1, height = 6.4)
 cat("07_steadiness: wrote counts, criterion comparison, coverage and SFig_Steadiness.\n")

@@ -22,8 +22,8 @@ mk <- function(sense, lab, phi0) {
   a <- phi0 + s * 2*pi*th
   data.frame(phase = th*100, panel = lab, x = 0.85 * cos(a), y = 1.1 * sin(a))
 }
-LAB_CCW <- "Pendular (walk-type)\nCCW, loop area > 0, KE & PE out of phase"
-LAB_CW  <- "Bouncing (run-type)\nCW, loop area < 0, KE & PE in phase"
+LAB_CCW <- "Pendular (walk-type)\nCCW, area > 0\nKE, PE out of phase"
+LAB_CW  <- "Bouncing (run-type)\nCW, area < 0\nKE, PE in phase"
 loops <- rbind(mk("CCW", LAB_CCW, 0), mk("CW", LAB_CW, -pi/4))
 loops$panel <- factor(loops$panel, levels = c(LAB_CCW, LAB_CW))
 pal   <- c("#3D4A5C","#1C9DA8","#C0398B","#D9A23B")
@@ -33,20 +33,27 @@ arrw  <- loops %>% group_by(panel) %>% filter(phase >= 6, phase <= 14) %>% ungro
 p <- ggplot(loops, aes(x, y, colour = phase)) +
   geom_hline(yintercept = 0, linetype = 3, colour = "grey70") +
   geom_vline(xintercept = 0, linetype = 3, colour = "grey70") +
-  geom_path(aes(group = panel), linewidth = 1.2) +
-  geom_path(data = arrw, aes(group = panel), linewidth = 1.2,
-            arrow = arrow(length = unit(3, "mm"), type = "closed")) +
-  geom_point(data = start, colour = "black", size = 2.4) +
+  geom_path(aes(group = panel), linewidth = 0.7) +
+  geom_path(data = arrw, aes(group = panel), linewidth = 0.7,
+            arrow = arrow(length = unit(1.6, "mm"), type = "closed")) +
+  geom_point(data = start, colour = "black", size = 1.3) +
   scale_colour_gradientn(colours = pal, name = "cycle %", limits = c(0,100)) +
   facet_wrap(~panel, ncol = 2) + coord_equal() +
   labs(x = LAB_FA_VEL, y = LAB_VERT_VEL) +
-  theme_daley() +
+  theme_bio() +
   theme(axis.text = element_blank(), axis.ticks = element_blank(),
-        strip.text = element_text(size = 9, lineheight = 0.95),
-        panel.background = element_rect(fill = "transparent", colour = NA))
-# Sized to the content, not to a round number: coord_equal() holds the panel aspect, so extra
-# canvas width becomes blank margin rather than larger panels. See the same note in
+        strip.text = element_text(size = BIO_BASE, face = "bold", lineheight = 1.0),
+        panel.background = element_rect(fill = "transparent", colour = NA),
+        legend.position = "bottom", legend.title = element_text(vjust = 1),
+        legend.key.height = unit(6, "pt"), legend.key.width = unit(26, "pt"),
+        legend.box.spacing = unit(2, "pt"), legend.margin = margin(0, 0, 0, 0),
+        axis.title.x = element_text(margin = margin(t = 2)),
+        # A strip label is clipped to its own panel, and these run the full panel width.
+        strip.clip = "off", panel.spacing.x = unit(2, "pt")) +
+  guides(colour = guide_colourbar(title.position = "left"))
+# Sized to the content, not to a round number: coord_equal() holds the panel aspect, so surplus
+# canvas in either direction becomes blank margin instead of larger panels. The height below is
+# measured against the two panels at single-column width. See the same note in
 # 14_fig_hodographs.R.
-ggsave("output/Fig1_HodographSchematic.pdf", p, width = 7.0, height = 4.6, device = cairo_pdf)
-ggsave("output/Fig1_HodographSchematic.png", p, width = 7.0, height = 4.6, dpi = 300, bg = "white")
+bio_save("Fig1_HodographSchematic", p, width = BIO_W1, height = 2.55)
 cat("08_fig_hodograph_schematic: Fig1_HodographSchematic (canonical hodograph schematic).\n")

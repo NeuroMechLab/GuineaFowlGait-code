@@ -1,7 +1,7 @@
 ## Guinea fowl center-of-mass dynamics across the walking-to-running speed range
 
 Data and code associated with the paper: **"A velocity-loop view of avian gait: hodograph rotation sense characterizes the walking-to-running continuum in guinea fowl"** Authors: Monica A. Daley and Aleksandra Birn-Jeffery\
-*Biology Open* (submitted for review). The journal reference and DOI will be added on acceptance.
+*Biology Open* (2026). doi:10.1242/bio.062880
 
 \***Author for correspondence:** [madaley@uci.edu](mailto:madaley@uci.edu)
 
@@ -17,9 +17,9 @@ Each of 334 trials is provided as a whole-recording time series in a standardize
 GaitSel_DryadPackage_AllGF/
 ├── README.md                                      # This file
 ├── trial_index.csv                                # One row per trial (334)
-├── steps_index.csv                                # One row per step (3961)
-├── perStep_long_multi.csv                         # Tidy per-step measures (3961 x 85)
-├── perStride_long_multi.csv                       # Tidy per-stride measures (1731 x 77)
+├── steps_index.csv                                # One row per step (3842)
+├── perStep_long_multi.csv                         # Tidy per-step measures (3842 x 85)
+├── perStride_long_multi.csv                       # Tidy per-stride measures (1678 x 77)
 ├── morphology_multi.csv                           # Per-session body mass and leg length (30)
 ├── trialRoster_multi.csv                          # Source file provenance per trial (334)
 ├── per_trial_timeseries.zip                       # Whole-bout time series, one pair per trial
@@ -63,10 +63,10 @@ All level (unperturbed) running trials with raw force and synchronized marker ca
 
 | Study tag                    | Trials | Steps | Strides | Dates                    | Plates | Description                                                     |
 | :--------------------------- | -----: | ----: | ------: | :----------------------- | :----- | :-------------------------------------------------------------- |
-| `RVC_Daley_2008-2011` | 189 | 2032 | 877 | 2008-11-20 to 2009-11-19 | 5 or 6 | Gait-selection collection plus the level baselines of an obstacle and a drop-perturbation collection |
-| `Blum_DropVsPothole_2012-02` | 77 | 1062 | 472 | 2012-02-14 to 2012-02-17 | 6 | Level running, the control condition of a drop-versus-pothole study |
-| `Blum_Surface_2012-06` | 68 | 867 | 382 | 2012-06-25 to 2012-06-28 | 6 | Level running on bare force plates, the flat rigid reference of a surface-compliance study |
-| **Total** | 334 | 3961 | 1731 | | | |
+| `RVC_Daley_2008-2011` | 189 | 1969 | 850 | 2008-11-20 to 2009-11-19 | 5 or 6 | Gait-selection collection plus the level baselines of an obstacle and a drop-perturbation collection |
+| `Blum_DropVsPothole_2012-02` | 77 | 1049 | 466 | 2012-02-14 to 2012-02-17 | 6 | Level running, the control condition of a drop-versus-pothole study |
+| `Blum_Surface_2012-06` | 68 | 824 | 362 | 2012-06-25 to 2012-06-28 | 6 | Level running on bare force plates, the flat rigid reference of a surface-compliance study |
+| **Total** | 334 | 3842 | 1678 | | | |
 
 Force was sampled at 500 Hz.
 
@@ -114,12 +114,12 @@ Leg length `L0` is the median CoM-to-foot distance at touchdown over the session
 Every detected step and stride is provided, with flags rather than deletion, so a reader can reproduce the paper's sample or define a different one.
 
 ```
-3961 steps detected
-2713 pass the quality-control gate           (qcPass = 1)
+3842 steps detected
+2620 pass the quality-control gate           (qcPass = 1)
   77 duty factor undetermined
   47 touchdown height out of range
    1 both
-2588 in the analysis sample                  (analysisSample = 1)
+2580 in the analysis sample                  (analysisSample = 1)
 ```
 
 | Flag             | Meaning                                                                                                                                                                                                                                     |
@@ -131,7 +131,7 @@ Every detected step and stride is provided, with flags rather than deletion, so 
 
 Two gait-space descriptors depend on foot-marker quality that cannot be detected based on a force-based gate: the per-limb duty factor is undefined where foot contact could not be determined from the markers, and the touchdown energy is considered infeasible where the reconstructed CoM height above the contacting foot falls outside 0.4 to 1.6 leg lengths.
 
-**`analysisSample = 1` is the column to filter on to reproduce the paper.** It selects 2588 steps and 945 strides. Within the step sample the steadiness split is 932 steady, 948 accelerating and 708 decelerating. Of 1731 strides detected, 1170 pass the stride gate and 945 are in the analysis sample, those being the strides that pass the gate and whose two steps are both in the step sample.
+**`analysisSample = 1` is the column to filter on to reproduce the paper.** It selects 2580 steps and 944 strides. Within the step sample the steadiness split is 930 steady, 947 accelerating and 703 decelerating. Of 1678 strides detected, 1129 pass the stride gate and 944 are in the analysis sample, those being the strides that pass the gate and whose two steps are both in the step sample.
 
 ---
 
@@ -199,7 +199,7 @@ One row per trial (334 rows, 15 columns).
 
 ## steps_index.csv
 
-One row per step (3961 rows, 14 columns). The compact step-level index; the full measures are in `perStep_long_multi.csv`.
+One row per step (3842 rows, 14 columns). The compact step-level index; the full measures are in `perStep_long_multi.csv`.
 
 | Column            | Units | Description                                                                          |
 | :---------------- | :---- | :------------------------------------------------------------------------------------ |
@@ -222,7 +222,7 @@ One row per step (3961 rows, 14 columns). The compact step-level index; the full
 
 ## perStep_long_multi.csv
 
-The tidy per-step analysis table: 3961 rows, 85 columns, one row per step. This and `perStride_long_multi.csv` are the tables the analysis and the summary statistics are computed from.
+The tidy per-step analysis table: 3842 rows, 85 columns, one row per step. This and `perStride_long_multi.csv` are the tables the analysis and the summary statistics are computed from.
 
 Columns ending `_n` are dimensionless (see Normalisation). Raw and dimensionless forms are both kept so a reader can work in either.
 
@@ -319,7 +319,7 @@ Columns ending `_n` are dimensionless (see Normalisation). Raw and dimensionless
 
 ## perStride_long_multi.csv
 
-The tidy per-stride table: 1731 rows, 77 columns, one row per stride (two steps). Column meanings match `perStep_long_multi.csv` except as noted.
+The tidy per-stride table: 1678 rows, 77 columns, one row per stride (two steps). Column meanings match `perStep_long_multi.csv` except as noted.
 
 | Column group | Columns | Notes |
 | :--- | :--- | :--- |
@@ -409,7 +409,7 @@ Dimensionless speed is $u = v/\sqrt{gL_0}$ and the Froude number is $u^2$.
 
 ## Processing Workflow
 
-The analysis code is on GitHub at [https://github.com/NeuroMechLab/GuineaFowlGait-code](https://github.com/NeuroMechLab/GuineaFowlGait-code), tagged `v1.0.0`. `PIPELINE.md` there gives the full run order and maps every output to the manuscript element that uses it. The sequence that produces the tables in this package is:
+The analysis code is on GitHub at [https://github.com/NeuroMechLab/GuineaFowlGait-code](https://github.com/NeuroMechLab/GuineaFowlGait-code), tagged `v1.1.0`. `PIPELINE.md` there gives the full run order and maps every output to the manuscript element that uses it. The sequence that produces the tables in this package is:
 
 ### MATLAB phase
 
@@ -425,7 +425,7 @@ The analysis code is on GitHub at [https://github.com/NeuroMechLab/GuineaFowlGai
 
 ### R phase
 
-**Step 6: Clean and fix the analysis sample.** `Rscript run_all.R` runs the numbered chain. `01_load.R` reads the tidy tables and builds the individual grouping; `02_clean.R` applies the MATLAB quality-control and steadiness flags; `03_step_descriptors.R` adds the collision angle and touchdown energy; `04_analysis_sample.R` fixes the analysis sample of 2588 steps and 945 strides and writes the label table.
+**Step 6: Clean and fix the analysis sample.** `Rscript run_all.R` runs the numbered chain. `01_load.R` reads the tidy tables and builds the individual grouping; `02_clean.R` applies the MATLAB quality-control and steadiness flags; `03_step_descriptors.R` adds the collision angle and touchdown energy; `04_analysis_sample.R` fixes the analysis sample of 2580 steps and 944 strides and writes the label table.
 
 **Step 7: Figures, tables and statistics.** The remaining numbered scripts produce them. `21_dryad_labels.R` writes this package's `perStep_long_multi.csv` and `perStride_long_multi.csv`, adding `gait`, `gait4`, `gaitHodo`, `steadiness`, `analysisSample` and `exclusionReason` to the MATLAB tidy tables.
 
@@ -461,10 +461,10 @@ The analysis code on GitHub is released separately under the MIT License.
 
 Please cite the associated manuscript when using this data or code:\
 Daley, M. A. and Birn-Jeffery, A. (2026). A velocity-loop view of avian gait: hodograph rotation
-sense characterizes the walking-to-running continuum in guinea fowl. *Biology Open* (submitted for
-review).
+sense characterizes the walking-to-running continuum in guinea fowl. *Biology Open*,
+doi:10.1242/bio.062880
 
-The volume, article number and DOI will be added on acceptance. Please also cite this data package:
+Please also cite this data package:
 
 Daley, M. A. and Birn-Jeffery, A. (2026). Data and code from: A velocity-loop view of avian gait:
 hodograph rotation sense characterizes the walking-to-running continuum in guinea fowl. Dryad,

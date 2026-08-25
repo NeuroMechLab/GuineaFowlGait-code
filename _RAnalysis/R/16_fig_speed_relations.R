@@ -22,13 +22,17 @@ scat <- function(y, ylab, href = NA, xlab = NULL) {
     group_by(sb) %>% summarise(u = mean(meanSpeed_n), m = mean(.data[[y]]),
       n = dplyr::n(), .groups = "drop") %>% filter(n >= 3)
   p <- ggplot(dd, aes(meanSpeed_n, .data[[y]])) +
-    geom_point(aes(colour = .data[[gcol]], shape = .data[[gcol]]), alpha = 0.55, size = 1.4) +
+    geom_point(aes(colour = .data[[gcol]], shape = .data[[gcol]]), alpha = 0.55, size = 0.8) +
     geom_smooth(data = bn, aes(u, m), method = "gam", formula = y ~ s(x, bs = "cs", k = 6),
-                se = TRUE, colour = "grey20", linewidth = 0.6) +
-    scale_color_gait() + scale_shape_gait() + labs(x = xlab, y = ylab) + theme_daley()
+                se = TRUE, colour = "grey20", linewidth = 0.5) +
+    scale_color_gait() + scale_shape_gait() + labs(x = xlab, y = ylab) +
+    coord_cartesian(xlim = XLIM) + theme_bio()
   if (is.finite(href)) p <- p + geom_hline(yintercept = href, linetype = 3, colour = "grey55")
   p
 }
+# The four panels share one speed axis, carried by panel D, so all four are drawn on the same
+# x range.
+XLIM <- range(d$meanSpeed_n, na.rm = TRUE)
 pA <- scat("dutyFactor",  "Duty factor", href = 0.5)
 pB <- scat("stepLength_n", LAB_STEPLEN)
 pC <- scat("stepFreq_n", LAB_STEPFREQ)
@@ -59,13 +63,17 @@ pD <- ggplot(ds, aes(meanSpeed_n)) +
   scale_linewidth_manual(values = GAIT_LWD, labels = GAIT_LABELS,
                          breaks = GAIT_LEVELS, name = "Gait") +
   labs(x = xlab_u, y = "Steps per speed bin") +
-  coord_cartesian(xlim = range(d$meanSpeed_n, na.rm = TRUE)) +  # share the speed axis with A-C
-  theme_daley() +
+  coord_cartesian(xlim = XLIM) +                       # share the speed axis with A-C
+  theme_bio() +
   guides(colour = "none", linewidth = "none", fill = "none")  # one Gait legend, from panels A-C
 cat("Speed overlap between gaits, steady steps:\n"); print(as.data.frame(ovl))
 
-fig <- (pA / pB / pC / pD) + plot_layout(guides = "collect") +
+# The gait key sits inside panel B, in the corner the step-length trend leaves empty.
+NOKEY <- theme(legend.position = "none")
+fig <- (pA + bio_drop_x() + NOKEY) /
+       (pB + bio_drop_x() + bio_inset_legend(0.99, 0.02)) /
+       (pC + bio_drop_x() + NOKEY) /
+       (pD + NOKEY) +
   plot_annotation(tag_levels = "A")
-ggsave("output/Fig6_SpeedRelations_Steady.pdf", fig, width = 7.5, height = 11, device = cairo_pdf)
-ggsave("output/Fig6_SpeedRelations_Steady.png", fig, width = 7.5, height = 11, dpi = 300)
+bio_save("Fig6_SpeedRelations_Steady", fig, width = BIO_W1, height = 7.6)
 cat(sprintf("16_fig_speed_relations: Fig6_SpeedRelations_Steady (%d steady steps).\n", nrow(d)))

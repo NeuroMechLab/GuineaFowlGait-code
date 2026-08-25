@@ -57,7 +57,11 @@ cat(sprintf("11_fig_energy_exchange: collision-angle ~ CoT Pearson r = %.3f (n =
 # speed intervals first gives every speed region equal weight, so the trend is not
 # pulled by the dense middle; bin means (with 95% CI whiskers) are drawn so the
 # reader sees the unbiased summary the curve is fit to.
-metric_panel <- function(y, ylab) {
+# The three panels share one speed axis, carried by the lowest of them, so all three are drawn
+# on the same x range. ymax caps a panel's view: coord_cartesian sets the view, so a point above
+# the cap is off the panel and still enters the bin means and the spline.
+XLIM <- range(d$meanSpeed_n, na.rm = TRUE)
+metric_panel <- function(y, ylab, ymax = NA) {
   dd <- d %>% filter(is.finite(.data[[y]]))
   rng <- range(dd$meanSpeed_n, na.rm = TRUE)
   brk <- seq(rng[1], rng[2], length.out = 19)                 # 18 equal-width speed bins
@@ -66,14 +70,15 @@ metric_panel <- function(y, ylab) {
       se = sd(.data[[y]]) / sqrt(dplyr::n()), n = dplyr::n(), .groups = "drop") %>%
     filter(n >= 3)
   ggplot(dd, aes(meanSpeed_n, .data[[y]])) +
-    geom_point(aes(colour = .data[[gcol]], shape = .data[[gcol]]), alpha = 0.55, size = 1.6) +
+    geom_point(aes(colour = .data[[gcol]], shape = .data[[gcol]]), alpha = 0.55, size = 0.9) +
     geom_errorbar(data = bn, aes(u, ymin = m - 1.96*se, ymax = m + 1.96*se),
-                  width = 0, colour = "grey35", inherit.aes = FALSE) +
-    geom_point(data = bn, aes(u, m), colour = "grey15", size = 1.6, inherit.aes = FALSE) +
+                  width = 0, colour = "grey35", inherit.aes = FALSE, linewidth = 0.3) +
+    geom_point(data = bn, aes(u, m), colour = "grey15", size = 0.9, inherit.aes = FALSE) +
     geom_smooth(data = bn, aes(u, m), method = "gam",
-                formula = y ~ s(x, bs = "cs", k = 6), se = TRUE, colour = "grey15", linewidth = 0.7) +
+                formula = y ~ s(x, bs = "cs", k = 6), se = TRUE, colour = "grey15", linewidth = 0.5) +
     scale_color_gait() + scale_shape_gait() +
-    labs(x = xlab, y = ylab) + theme_daley()
+    coord_cartesian(xlim = XLIM, ylim = if (is.na(ymax)) NULL else c(NA, ymax)) +
+    labs(x = xlab, y = ylab) + theme_bio()
 }
 p_rec <- metric_panel("recovery",  "Pendular energy recovery (%)")
 p_con <- metric_panel("congruity", "KE-PE congruity (%)")
@@ -82,12 +87,24 @@ p_con <- metric_panel("congruity", "KE-PE congruity (%)")
 # in radians, so the axis is not labelled with that equivalence; it is stated in the caption
 # and quantified by the correlation above, which is computed on the radian form.
 ycol  <- if ("collisionAngle_deg" %in% names(d)) "collisionAngle_deg" else "CoTmech"
-p_col <- metric_panel(ycol, "Collision angle (deg)")
+# Capped so the panel resolves the band the steps occupy; the steps above the cap are counted
+# into the artifact the legend quotes.
+COLL_CAP <- 25
+p_col <- metric_panel(ycol, "Collision angle (deg)", ymax = COLL_CAP)
+readr::write_csv(
+  data.frame(panel = "Fig 4C", measure = ycol, axis_cap_deg = COLL_CAP,
+             steps_drawn = sum(is.finite(d[[ycol]])),
+             steps_above_cap = sum(d[[ycol]] > COLL_CAP, na.rm = TRUE),
+             max_deg = round(max(d[[ycol]], na.rm = TRUE), 1)),
+  "output/fig4_axis_clipping.csv")
 
-fig <- (p_rec / p_con / p_col) + plot_layout(guides = "collect") +
+# The gait key sits inside panel B, in the corner the congruity cloud leaves empty.
+NOKEY <- theme(legend.position = "none")
+fig <- (p_rec + bio_drop_x() + NOKEY) /
+       (p_con + bio_drop_x() + bio_inset_legend(0.99, 0.02)) /
+       (p_col + NOKEY) +
   plot_annotation(tag_levels = "A")
-ggsave("output/Fig4_MetricMapping_Steady.pdf", fig, width = 7.5, height = 10.5, device = cairo_pdf)
-ggsave("output/Fig4_MetricMapping_Steady.png", fig, width = 7.5, height = 10.5, dpi = 300)
+bio_save("Fig4_MetricMapping_Steady", fig, width = BIO_W1, height = 6.4)
 cat(sprintf("11_fig_energy_exchange: Fig4_MetricMapping_Steady (%d steady steps).\n", nrow(d)))
 
 # ---- how closely does the weighted collision angle track the mechanical cost of transport? ----

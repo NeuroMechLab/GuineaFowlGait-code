@@ -136,8 +136,8 @@ info <- loops %>% distinct(strideIndex, seq) %>%
                               dplyr::recode(acc, accelerating = "accel.", decelerating = "decel."))
                   e <- ifelse(is_half, trimws(paste(e, "half stride", sep = ", ")), e)
                   sub("^, ", "", e)},
-         lab2  = sprintf("u = %.2f (%.2f m/s), %s\narea %.1f%% CW, %.1f%% CCW%s",
-                         u, v_ms, sense, pct_area_cw, pct_area_ccw,
+         lab2  = sprintf("u = %.2f\n%.0f%% %s%s",
+                         u, pmax(pct_area_cw, pct_area_ccw), sense,
                          ifelse(extra == "", "", paste0("\n", extra))),
          col   = GAIT_COLORS[gait])
 # The dominant share must reproduce the production sense, since both are the sign of the same sum.
@@ -147,7 +147,7 @@ readr::write_csv(info %>% select(seq, strideIndex, gait, sense, u, v_ms, acc, is
                  "output/trial_sequence_strides.csv")
 
 y_lo   <- min(loops$vvert_n); y_hi <- max(loops$vvert_n)
-y_lab1 <- y_lo - 0.10; y_lab2 <- y_lo - 0.19
+y_lab1 <- y_lo - 0.10; y_lab2 <- y_lo - 0.155
 td  <- loops %>% filter(u == min(u))                          # stride touchdown
 mid <- loops %>% filter(stepInStride == 2) %>% group_by(seq) %>%
   slice_min(u, n = 1, with_ties = FALSE) %>% ungroup()        # contralateral touchdown
@@ -159,23 +159,28 @@ p <- ggplot(loops, aes(x, vvert_n, group = seq)) +
   geom_point(data = td,  colour = "black", size = 1.8) +
   geom_point(data = mid, shape = 21, colour = "black", fill = "white", size = 1.8) +
   geom_text(data = info, aes(x = (seq - 1) * dx, y = y_lab1, label = lab1),
-            colour = info$col, size = 2.6, fontface = "bold", inherit.aes = FALSE) +
+            colour = info$col, size = BIO_BASE * 0.3528, family = BIO_FONT,
+            fontface = "bold", inherit.aes = FALSE) +
+  # vjust = 1 hangs the block below its anchor, so every line stays inside the panel.
   geom_text(data = info, aes(x = (seq - 1) * dx, y = y_lab2, label = lab2),
-            colour = "grey40", size = 2.3, lineheight = 0.9, inherit.aes = FALSE) +
+            colour = "grey40", size = BIO_BASE * 0.3528, family = BIO_FONT,
+            lineheight = 1.0, vjust = 1, inherit.aes = FALSE) +
+  expand_limits(y = y_lo - 0.32) +
   scale_colour_gradientn(colours = c("#3D4A5C", "#1C9DA8", "#C0398B", "#D9A23B"),
                          name = "stride %", limits = c(0, 100)) +
   scale_x_continuous(breaks = centers, labels = seq_len(K)) +
   coord_equal() +
   labs(x = "stride within the trial (travel direction left to right)", y = LAB_VERT_VEL) +
-  theme_daley()
+  theme_bio()
 
-# coord_equal(): size the canvas to the content so the panel is not padded with blank space
+# coord_equal(): size the canvas to the content so the panel is not padded with blank space.
+# The width is the journal's double column, and the scale follows from it.
 xr <- (K - 1) * dx + 1.6 * dx
-yr <- (y_hi - y_lo) + 0.44                      # data height plus the three-line label band
-S  <- min(4.5, 13 / xr)                         # inches per velocity unit, width-capped
-W  <- xr * S + 1.7; H <- yr * S + 1.5
-ggsave("output/SFig_TrialSequence.pdf", p, width = W, height = H, device = cairo_pdf)
-ggsave("output/SFig_TrialSequence.png", p, width = W, height = H, dpi = 300, bg = "white")
+yr <- (y_hi - y_lo) + 0.34                      # data height plus the three-line label band
+AX <- 1.0                                       # axis titles, ticks and legend, inches
+S  <- (BIO_W2 - AX) / xr                        # inches per velocity unit
+H  <- min(yr * S + 0.8, BIO_HMAX)
+bio_save("SFig_TrialSequence", p, width = BIO_W2, height = H)
 cat(sprintf("15_sfig_trial_sequence: %d bouts pass the arc rule; chose %s (%s), %d strides.\n",
             nrow(cand), BOUT, cand$bird[1], K))
 print(as.data.frame(info %>% select(seq, gait, sense, u, acc, is_half)), digits = 3)
