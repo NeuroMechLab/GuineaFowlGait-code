@@ -409,7 +409,7 @@ Dimensionless speed is $u = v/\sqrt{gL_0}$ and the Froude number is $u^2$.
 
 ## Processing Workflow
 
-The analysis code is on GitHub at [https://github.com/NeuroMechLab/GuineaFowlGait-code](https://github.com/NeuroMechLab/GuineaFowlGait-code), tagged `v1.1.0`. `PIPELINE.md` there gives the full run order and maps every output to the manuscript element that uses it. The sequence that produces the tables in this package is:
+The analysis code is on GitHub at [https://github.com/NeuroMechLab/GuineaFowlGait-code](https://github.com/NeuroMechLab/GuineaFowlGait-code), tagged `v1.2.1`. `PIPELINE.md` there gives the full run order and maps every output to the manuscript element that uses it. The sequence that produces the tables in this package is:
 
 ### MATLAB phase
 

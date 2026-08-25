@@ -18,7 +18,7 @@ hodograph rotation sense characterizes the walking-to-running continuum in guine
 doi:10.5061/dryad.7m0cfxqc4. This repository is the code; the Dryad package is the data. Neither
 contains the other, and the section below says how they meet.
 
-**Version:** `v1.1.0`, cut from the working repository at commit
+**Version:** `v1.2.1`, cut from the working repository at commit
 `65492fb228615a64f19fd1aa17a5bc011aceedc8`. This repository keeps its revision history
 from v1.0.0 forward: each release is tagged, and the commits between tags are the changes made
 since the version the paper cites.
@@ -121,7 +121,7 @@ The Dryad package carries its own license terms for the data.
 Cite the paper. If you need to cite the code specifically, cite the archived release:
 
     Daley, M. A. and Birn-Jeffery, A. (2026). Guinea fowl gait selection: analysis code,
-    version v1.1.0. https://github.com/NeuroMechLab/GuineaFowlGait-code
+    version v1.2.1. https://github.com/NeuroMechLab/GuineaFowlGait-code
 
 ## Contact
 
