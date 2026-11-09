@@ -16,10 +16,12 @@ hodograph rotation sense characterizes the walking-to-running continuum in guine
 
 **Data:** the recordings and the processed per-step and per-stride tables are archived on Dryad at
 doi:10.5061/dryad.7m0cfxqc4. This repository is the code; the Dryad package is the data. Neither
-contains the other, and the section below says how they meet.
+contains the other, and the section below says how they meet. This release runs from the current
+version of the package, which corrects the sign of the horizontal ground reaction force in
+77 trials; the package README's Version History describes the correction.
 
-**Version:** `v1.2.1`, cut from the working repository at commit
-`65492fb228615a64f19fd1aa17a5bc011aceedc8`. This repository keeps its revision history
+**Version:** `v1.3.0`, cut from the working repository at commit
+`bead51aa9dd344467be7ecbd6e2610076995aa97`. This repository keeps its revision history
 from v1.0.0 forward: each release is tagged, and the commits between tags are the changes made
 since the version the paper cites.
 
@@ -98,11 +100,16 @@ part of `run_all.R`.
 ## The analysis sample
 
 One gate, in `_RAnalysis/R/04_analysis_sample.R`: the MATLAB quality-control gate plus every
-gait-space descriptor defined, giving **2580 steps and 944 strides** of the 3842 steps and 1678
-strides detected, over 323 level trials from 30 recording sessions and 13 individuals. Nothing
-downstream filters again, so any count reported as a fraction of all steps has 2580 as its
-denominator. The Dryad package carries an `analysisSample` flag that reproduces exactly that set,
-which is how a reader reproduces the paper's sample without rerunning the gate.
+gait-space descriptor defined. From the current version of the Dryad package it gives
+**2578 steps and 942 strides** of the 3842 steps and 1678 strides detected, over 323 level
+trials from 30 recording sessions and 13 individuals. Nothing downstream filters again, so any
+count reported as a fraction of all steps has 2578 as its denominator. The Dryad package carries
+an `analysisSample` flag that reproduces exactly that set, which is how a reader reproduces the
+sample without rerunning the gate.
+
+The paper reports 2580 steps and 944 strides, computed from the earlier version of the
+package, before the horizontal force correction. The package README's Version History lists how
+the reported values change with the corrected data; none of the paper's claims changes.
 
 ## Conventions
 
@@ -121,7 +128,7 @@ The Dryad package carries its own license terms for the data.
 Cite the paper. If you need to cite the code specifically, cite the archived release:
 
     Daley, M. A. and Birn-Jeffery, A. (2026). Guinea fowl gait selection: analysis code,
-    version v1.2.1. https://github.com/NeuroMechLab/GuineaFowlGait-code
+    version v1.3.0. https://github.com/NeuroMechLab/GuineaFowlGait-code
 
 ## Contact
 

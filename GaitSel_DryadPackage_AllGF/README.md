@@ -5,6 +5,10 @@ Data and code associated with the paper: **"A velocity-loop view of avian gait: 
 
 \***Author for correspondence:** [madaley@uci.edu](mailto:madaley@uci.edu)
 
+## Version
+
+This version corrects the sign of the horizontal ground reaction force in 77 trials and every quantity computed from it. Version History, below, lists the changes and their effect on the results the article reports, which were computed from the previous version.
+
 ## Overview
 
 This package contains ground reaction force recordings and reconstructed center-of-mass (CoM) trajectories for guinea fowl (*Numida meleagris*) running over level ground, compiled from three Royal Veterinary College data collections and reprocessed through one common pipeline. The analysis asks how the rotation sense of the CoM velocity loop, the hodograph, relates to the transition from pendular (walking) to bouncing (running) dynamics, and compares it against established center-of-mass criteria across a speed range that includes extensive grounded running.
@@ -18,10 +22,11 @@ GaitSel_DryadPackage_AllGF/
 ├── README.md                                      # This file
 ├── trial_index.csv                                # One row per trial (334)
 ├── steps_index.csv                                # One row per step (3842)
-├── perStep_long_multi.csv                         # Tidy per-step measures (3842 x 85)
-├── perStride_long_multi.csv                       # Tidy per-stride measures (1678 x 77)
+├── perStep_long_multi.csv                         # Tidy per-step measures (3842 x 90)
+├── perStride_long_multi.csv                       # Tidy per-stride measures (1678 x 78)
 ├── morphology_multi.csv                           # Per-session body mass and leg length (30)
 ├── trialRoster_multi.csv                          # Source file provenance per trial (334)
+├── force_sign_corrections.csv                     # Force columns whose sign this version corrects (78)
 ├── per_trial_timeseries.zip                       # Whole-bout time series, one pair per trial
 │   └── per_trial_timeseries/                      #   unzips to this folder
 │       ├── [bird]_[YYYYMMDD]_[trialStem].csv      # 20 channels at 500 Hz
@@ -78,34 +83,34 @@ Thirty bird-sessions over thirteen individuals. Colour codes name the same indiv
 | :------ | :-------- | :---- | :----------- | --------: | -----: | :-------- | -----: | ----: | ------: |
 | `pot_bla` | `blum12_bla` | Blum_DropVsPothole_2012-02 | 2012-02 | 1.158 | 0.208 | session | 10 | 169 | 77 |
 | `pot_blu` | `blum12_blu` | Blum_DropVsPothole_2012-02 | 2012-02 | 1.087 | 0.205 | session | 10 | 133 | 60 |
-| `pot_g00` | `blum12_g00` | Blum_DropVsPothole_2012-02 | 2012-02 | 1.313 | 0.205 | session | 10 | 132 | 58 |
+| `pot_g00` | `blum12_g00` | Blum_DropVsPothole_2012-02 | 2012-02 | 1.313 | 0.207 | session | 10 | 119 | 52 |
 | `pot_gry` | `blum12_gry` | Blum_DropVsPothole_2012-02 | 2012-02 | 1.377 | 0.222 | session | 10 | 140 | 61 |
 | `pot_reb` | `blum12_reb` | Blum_DropVsPothole_2012-02 | 2012-02 | 1.177 | 0.219 | session | 10 | 134 | 60 |
 | `pot_red` | `blum12_red` | Blum_DropVsPothole_2012-02 | 2012-02 | 1.243 | 0.204 | session | 10 | 181 | 83 |
-| `pot_rre` | `blum12_rre` | Blum_DropVsPothole_2012-02 | 2012-02 | 1.253 | 0.208 | allometry | 7 | 52 | 20 |
+| `pot_rre` | `blum12_rre` | Blum_DropVsPothole_2012-02 | 2012-02 | 1.253 | 0.204 | allometry | 7 | 52 | 20 |
 | `pot_yel` | `blum12_yel` | Blum_DropVsPothole_2012-02 | 2012-02 | 1.172 | 0.198 | session | 10 | 121 | 53 |
 | `surf_bla` | `blum12_bla` | Blum_Surface_2012-06 | 2012-06 | 1.453 | 0.222 | session | 10 | 190 | 87 |
-| `surf_g00` | `blum12_g00` | Blum_Surface_2012-06 | 2012-06 | 1.740 | 0.219 | session | 9 | 131 | 59 |
+| `surf_g00` | `blum12_g00` | Blum_Surface_2012-06 | 2012-06 | 1.740 | 0.223 | session | 9 | 116 | 52 |
 | `surf_gry` | `blum12_gry` | Blum_Surface_2012-06 | 2012-06 | 1.492 | 0.232 | session | 10 | 111 | 48 |
-| `surf_noc` | `blum12_blu` | Blum_Surface_2012-06 | 2012-06 | 1.361 | 0.210 | session | 10 | 132 | 59 |
+| `surf_noc` | `blum12_blu` | Blum_Surface_2012-06 | 2012-06 | 1.361 | 0.210 | session | 10 | 117 | 52 |
 | `surf_red` | `blum12_red` | Blum_Surface_2012-06 | 2012-06 | 1.332 | 0.214 | session | 10 | 129 | 58 |
-| `surf_rre` | `blum12_rre` | Blum_Surface_2012-06 | 2012-06 | 1.424 | 0.207 | allometry | 9 | 68 | 26 |
-| `surf_yel` | `blum12_yel` | Blum_Surface_2012-06 | 2012-06 | 1.302 | 0.220 | session | 10 | 106 | 45 |
-| `rvc_blu` | `rvc_blu` | RVC_Daley_2008-2011 | 2008-11 | 1.161 | 0.203 | session | 2 | 18 | 8 |
+| `surf_rre` | `blum12_rre` | Blum_Surface_2012-06 | 2012-06 | 1.424 | 0.206 | allometry | 9 | 68 | 26 |
+| `surf_yel` | `blum12_yel` | Blum_Surface_2012-06 | 2012-06 | 1.302 | 0.227 | session | 10 | 93 | 39 |
+| `rvc_blu` | `rvc_blu` | RVC_Daley_2008-2011 | 2008-11 | 1.161 | 0.187 | session | 2 | 18 | 8 |
 | `rvc_blu` | `rvc_blu` | RVC_Daley_2008-2011 | 2009-05 | 1.378 | 0.200 | session | 13 | 113 | 48 |
-| `rvc_blu` | `rvc_blu` | RVC_Daley_2008-2011 | 2009-11 | 1.286 | 0.203 | bird | 10 | 47 | 16 |
+| `rvc_blu` | `rvc_blu` | RVC_Daley_2008-2011 | 2009-11 | 1.286 | 0.199 | bird | 10 | 42 | 14 |
 | `rvc_bly` | `rvc_bly` | RVC_Daley_2008-2011 | 2008-11 | 1.277 | 0.197 | bird | 4 | 14 | 4 |
 | `rvc_bly` | `rvc_bly` | RVC_Daley_2008-2011 | 2009-05 | 1.653 | 0.197 | session | 29 | 471 | 214 |
 | `rvc_bly` | `rvc_bly` | RVC_Daley_2008-2011 | 2009-11 | 1.273 | 0.197 | bird | 11 | 80 | 32 |
-| `rvc_red` | `rvc_red` | RVC_Daley_2008-2011 | 2008-11 | 1.380 | 0.216 | session | 4 | 35 | 14 |
+| `rvc_red` | `rvc_red` | RVC_Daley_2008-2011 | 2008-11 | 1.380 | 0.211 | session | 4 | 29 | 12 |
 | `rvc_red` | `rvc_red` | RVC_Daley_2008-2011 | 2009-05 | 1.934 | 0.197 | session | 20 | 286 | 128 |
-| `rvc_red` | `rvc_red` | RVC_Daley_2008-2011 | 2009-11 | 1.338 | 0.200 | bird | 12 | 86 | 34 |
-| `rvc_rey` | `rvc_rey` | RVC_Daley_2008-2011 | 2008-11 | 1.317 | 0.193 | session | 1 | 9 | 4 |
+| `rvc_red` | `rvc_red` | RVC_Daley_2008-2011 | 2009-11 | 1.338 | 0.199 | bird | 12 | 77 | 30 |
+| `rvc_rey` | `rvc_rey` | RVC_Daley_2008-2011 | 2008-11 | 1.317 | 0.192 | session | 1 | 9 | 4 |
 | `rvc_rey` | `rvc_rey` | RVC_Daley_2008-2011 | 2009-05 | 1.771 | 0.192 | session | 24 | 363 | 161 |
 | `rvc_rey` | `rvc_rey` | RVC_Daley_2008-2011 | 2009-11 | 1.276 | 0.208 | session | 15 | 107 | 44 |
-| `rvc_yel` | `rvc_yel` | RVC_Daley_2008-2011 | 2008-11 | 1.203 | 0.195 | session | 4 | 31 | 13 |
-| `rvc_yel` | `rvc_yel` | RVC_Daley_2008-2011 | 2009-04 | 1.504 | 0.198 | session | 29 | 313 | 135 |
-| `rvc_yel` | `rvc_yel` | RVC_Daley_2008-2011 | 2009-11 | 1.190 | 0.198 | bird | 11 | 59 | 22 |
+| `rvc_yel` | `rvc_yel` | RVC_Daley_2008-2011 | 2008-11 | 1.203 | 0.163 | session | 4 | 31 | 13 |
+| `rvc_yel` | `rvc_yel` | RVC_Daley_2008-2011 | 2009-04 | 1.504 | 0.197 | session | 29 | 284 | 122 |
+| `rvc_yel` | `rvc_yel` | RVC_Daley_2008-2011 | 2009-11 | 1.190 | 0.196 | bird | 11 | 45 | 16 |
 
 Leg length `L0` is the median CoM-to-foot distance at touchdown over the session's steps with no aerial phase. Where a session yielded fewer than five such steps it falls back to that bird's sessions pooled, and for the one bird that never yielded five, to a within-sample allometry on body mass; the `L0 source` column records which applies.
 
@@ -115,11 +120,11 @@ Every detected step and stride is provided, with flags rather than deletion, so 
 
 ```
 3842 steps detected
-2620 pass the quality-control gate           (qcPass = 1)
-  77 duty factor undetermined
-  47 touchdown height out of range
-   1 both
-2580 in the analysis sample                  (analysisSample = 1)
+2618 pass the quality-control gate           (qcPass = 1)
+   0 duty factor undetermined
+  40 touchdown height out of range
+   0 both
+2578 in the analysis sample                  (analysisSample = 1)
 ```
 
 | Flag             | Meaning                                                                                                                                                                                                                                     |
@@ -131,7 +136,34 @@ Every detected step and stride is provided, with flags rather than deletion, so 
 
 Two gait-space descriptors depend on foot-marker quality that cannot be detected based on a force-based gate: the per-limb duty factor is undefined where foot contact could not be determined from the markers, and the touchdown energy is considered infeasible where the reconstructed CoM height above the contacting foot falls outside 0.4 to 1.6 leg lengths.
 
-**`analysisSample = 1` is the column to filter on to reproduce the paper.** It selects 2580 steps and 944 strides. Within the step sample the steadiness split is 930 steady, 947 accelerating and 703 decelerating. Of 1678 strides detected, 1129 pass the stride gate and 944 are in the analysis sample, those being the strides that pass the gate and whose two steps are both in the step sample.
+**`analysisSample = 1` is the column to filter on to reproduce the paper.** It selects 2578 steps and 942 strides. Within the step sample the steadiness split is 929 steady, 942 accelerating and 707 decelerating. Of 1678 strides detected, 1126 pass the stride gate and 942 are in the analysis sample, those being the strides that pass the gate and whose two steps are both in the step sample.
+
+---
+
+## Missing Values
+
+Every CSV in this package writes a missing value as `NA`, and no cell is left blank. A value is
+`NA` where the quantity is not defined for that row, and the flag or label that says why it is
+undefined sits in the same row. Nothing is missing through a lost or corrupted recording.
+
+| File | Column | Rows affected | What `NA` means |
+| :--- | :--- | :--- | :--- |
+| `steps_index.csv`, `perStep_long_multi.csv` | `gait`, `gait4`, `steadiness` | 1224 of 3842 steps | Not applicable. The step did not pass the quality-control gate, so it was never classified. `qcPass` is 0 and `exclusionReason` reads `did not pass the QC gate` on every one of these rows. |
+| `perStep_long_multi.csv` | `contactTime`, `contactTime_n` | 76 of 3842 steps | Not available. No foot-marker contact interval fell within the step, so marker-based stance duration could not be measured for it. |
+| `perStep_long_multi.csv` | `legCompress_n`, `kLeg_n` | 469 of 3842 steps | Not applicable. The spring-mass inversion returned a non-physical leg compression for the step, so no leg stiffness is defined. |
+| `perStep_long_multi.csv`, `perStride_long_multi.csv` | `dutyLimb` | 964 of 3842 steps, 329 of 1678 strides | Not available. No single-plate contact could be isolated within the step, so the plate-based duty-factor cross-check has no limb to name. Most fall in the RVC five-plate trials. |
+| `perStep_long_multi.csv` | `gaitLabelHand` | all 3842 steps | Not available. The hand gait labels of the original single-study collections were not carried into the compiled roster this package is built from. The column is kept because the analysis code reads it, and the analysis does not use its values. |
+| `perStride_long_multi.csv` | `gaitLabelHand`, `gaitCodeHand` | all 1678 strides | As above. |
+| `trialRoster_multi.csv` | `logFile` | 266 of 334 trials | Not applicable. The trial has no acquisition log file; only the 68 `Blum_Surface_2012-06` trials were recorded with one. The plate count and sampling rate a log file carries are in `trial_index.csv` for every trial. |
+
+Every other column has a value in every row. `dutyFactor`, the marker-based per-limb duty factor
+the paper reports, is defined for all 3842 steps, as is the dimensionless speed `u`. The 334
+per-trial time-series CSVs and `mean_cycles.csv` contain no missing values at all.
+
+The `.mat` files hold the same content in MATLAB types. In the `steps` table
+inside each per-trial `.mat`, the three label columns are empty strings ("") on the 1222 rows
+where the CSV reads `NA`, which is how MATLAB represents an unset string, and numeric quantities
+use `NaN`.
 
 ---
 
@@ -216,13 +248,13 @@ One row per step (3842 rows, 14 columns). The compact step-level index; the full
 | `qcPass`          | -     | Retention-gate flag                                                                  |
 | `analysisSample`  | -     | 1 for the rows behind the paper                                                      |
 | `exclusionReason` | -     | Why a row is not in the analysis sample                                              |
-| `u`               | -     | Dimensionless speed, $v/\sqrt{gL_0}$                                                 |
+| `u`               | -     | Dimensionless speed, v/√(gL₀)                                                 |
 
 ---
 
 ## perStep_long_multi.csv
 
-The tidy per-step analysis table: 3842 rows, 85 columns, one row per step. This and `perStride_long_multi.csv` are the tables the analysis and the summary statistics are computed from.
+The tidy per-step analysis table: 3842 rows, 90 columns, one row per step. This and `perStride_long_multi.csv` are the tables the analysis and the summary statistics are computed from.
 
 Columns ending `_n` are dimensionless (see Normalisation). Raw and dimensionless forms are both kept so a reader can work in either.
 
@@ -231,7 +263,7 @@ Columns ending `_n` are dimensionless (see Normalisation). Raw and dimensionless
 | Column | Description |
 | :--- | :--- |
 | `boutID`, `stepIndex` | Trial and step, the join key to `steps_index.csv` and the per-trial series |
-| `bird`, `colourCode`, `study`, `dataset`, `dateCode`, `trialNo` | Session, cohort and collection labels |
+| `session`, `bird`, `colourCode`, `study`, `dataset`, `dateCode`, `trialNo` | Session, cohort and collection labels; `session` is `bird\|YYYY-MM`, the grain at which mass and leg length are set |
 | `mass_kg`, `L0_m`, `BW_N` | Per-session body mass, leg length and body weight, the normalisation scales |
 | `gaitLabelHand` | Legacy hand label from the original collection; not used in the analysis |
 
@@ -253,7 +285,7 @@ Columns ending `_n` are dimensionless (see Normalisation). Raw and dimensionless
 | `contactTime`, `contactTime_n` | s | Marker-based stance duration |
 | `flightTime`, `flightTime_n` | s | Aerial-phase duration |
 | `hasFlight` | - | 1 where the summed vertical force reaches zero |
-| `dutyFactor` | - | Per-limb duty factor from foot-marker contact; missing where marker contact could not be determined |
+| `dutyFactor` | - | Per-limb duty factor from foot-marker contact; the duty factor the paper reports, defined for every step |
 | `dutyFactor_gf` | - | Force-based estimate, grounded fraction divided by two, kept for cross-check |
 | `groundedFrac` | - | Fraction of the step with any ground contact |
 | `dutyLimb` | - | Which limb the duty factor refers to |
@@ -262,10 +294,10 @@ Columns ending `_n` are dimensionless (see Normalisation). Raw and dimensionless
 
 | Column | Units | Description |
 | :--- | :--- | :--- |
-| `meanSpeed`, `meanSpeed_n` | m/s | Mean forward speed over the step. `meanSpeed_n` is the dimensionless speed $u$ |
+| `meanSpeed`, `meanSpeed_n` | m/s | Mean forward speed over the step. `meanSpeed_n` is the dimensionless speed u |
 | `speed_TD`, `speed_TD_n` | m/s | Forward speed at touchdown |
 | `stepLength`, `stepLength_n` | m | Fore-aft CoM displacement over the step |
-| `Froude` | - | Froude number, $u^2$ |
+| `Froude` | - | Froude number, u² |
 | `accelForeAft`, `accelForeAft_n`, `accelSign` | m/s² | Mean fore-aft acceleration and its sign |
 | `vertExcursion`, `vertExcursion_n` | m | Vertical CoM excursion |
 
@@ -282,14 +314,14 @@ Columns ending `_n` are dimensionless (see Normalisation). Raw and dimensionless
 
 | Column | Units | Description |
 | :--- | :--- | :--- |
-| `dKE_step`, `dKE_step_n` | J | Change in forward kinetic energy $E_{kf} = \frac{1}{2}m(v_{ml}^2 + v_{fa}^2)$ |
-| `dPE_step`, `dPE_step_n` | J | Change in vertical energy $E_v = mgz + \frac{1}{2}mv_{vert}^2$ |
+| `dKE_step`, `dKE_step_n` | J | Change in forward kinetic energy E_kf = ½m(v_ml² + v_fa²) |
+| `dPE_step`, `dPE_step_n` | J | Change in vertical energy E_v = mgz + ½mv_vert² |
 | `dE_CoM`, `dE_CoM_n` | J | Net change in total CoM mechanical energy |
 | `W_CoM_pos`, `W_CoM_neg`, `W_CoM_net` (and `_n`) | J | Positive, negative and net CoM work |
 | `KE_range`, `PE_range` (and `_n`) | J | Within-step range of each energy component |
 | `ampRatio_KEtoPE` | - | Ratio of the kinetic to the vertical energy amplitude |
 | `WE_relresid`, `WE_r` | - | Work-energy identity relative residual and ratio, the reconstruction-quality measures |
-| `fracEG`, `fracDE`, `fracDV` | - | Steadiness measures: energy grade $\Delta E_{CoM}/(mgL)$ (the analysis criterion), energy fraction $\Delta E_{CoM}/(mv^2)$, and fore-aft speed change $\lvert aT/v \rvert$ |
+| `fracEG`, `fracDE`, `fracDV` | - | Steadiness measures: energy grade ΔE_CoM/(mgL) (the analysis criterion), energy fraction ΔE_CoM/(mv²), and fore-aft speed change \|aT/v\| |
 | `driftRMS_vert_mm` | mm | Trial-level vertical reconstruction drift, repeated on each step |
 
 **Gait descriptors** (the six continuous descriptors of the gait space, plus the hodograph measure)
@@ -297,11 +329,11 @@ Columns ending `_n` are dimensionless (see Normalisation). Raw and dimensionless
 | Column | Units | Description |
 | :--- | :--- | :--- |
 | `recovery` | % | Pendular energy recovery (Cavagna, Heglund and Taylor 1977) |
-| `congruity` | % | Percentage of the cycle over which $E_{kf}$ and $E_v$ change in the same direction (Ahn, Furrow and Biewener 2004) |
+| `congruity` | % | Percentage of the cycle over which E_kf and E_v change in the same direction (Ahn, Furrow and Biewener 2004) |
 | `collisionAngle` | rad | Force- and velocity-weighted deviation of the ground reaction force from perpendicular to CoM velocity (Lee et al. 2011, 2013) |
 | `collisionFraction` | - | Fraction of the cycle contributing to the collision angle |
 | `CoTmech` | - | Dimensionless mechanical cost of transport |
-| `hodoArea`, `hodoArea_n` | m²/s² | Signed area of the CoM velocity loop by the shoelace formula. Positive is counterclockwise (pendular), negative clockwise (bouncing). `hodoArea_n` is $A/(gL_0)$ |
+| `hodoArea`, `hodoArea_n` | m²/s² | Signed area of the CoM velocity loop by the shoelace formula. Positive is counterclockwise (pendular), negative clockwise (bouncing). `hodoArea_n` is A/(gL₀) |
 
 **Virtual leg and leg stiffness**
 
@@ -311,19 +343,19 @@ Columns ending `_n` are dimensionless (see Normalisation). Raw and dimensionless
 | `legAngle_TD` | deg | Virtual leg angle at touchdown, counterclockwise from horizontal with fore-aft positive in the direction of travel |
 | `dLegLen`, `dLegAngle` | m, deg | Change in leg length and angle over stance; a negative `dLegAngle` is limb retraction |
 | `legCompress_n` | - | Leg compression as a fraction of touchdown leg length |
-| `kLeg_n` | BW/L0 | Dimensionless leg-spring stiffness $kL_0/(mg)$, from $k = F_{max}/\Delta L$ with compression recovered by inverting a sinusoidal vertical force profile over contact (Blum, Lipfert and Seyfarth 2009, method C) |
+| `kLeg_n` | BW/L0 | Dimensionless leg-spring stiffness kL₀/(mg), from k = F_max/ΔL with compression recovered by inverting a sinusoidal vertical force profile over contact (Blum, Lipfert and Seyfarth 2009, method C) |
 
-`legCompress_n` and `kLeg_n` are missing where the inversion returns a non-physical compression. Leg stiffness is defined only relative to the spring-mass template it comes from, and where two limbs share the net force in double support it is an effective two-limb stiffness rather than a single-limb property.
+`legCompress_n` and `kLeg_n` are `NA` where the inversion returns a non-physical compression. Leg stiffness is defined only relative to the spring-mass template it comes from, and where two limbs share the net force in double support it is an effective two-limb stiffness rather than a single-limb property.
 
 ---
 
 ## perStride_long_multi.csv
 
-The tidy per-stride table: 1678 rows, 77 columns, one row per stride (two steps). Column meanings match `perStep_long_multi.csv` except as noted.
+The tidy per-stride table: 1678 rows, 78 columns, one row per stride (two steps). Column meanings match `perStep_long_multi.csv` except as noted.
 
 | Column group | Columns | Notes |
 | :--- | :--- | :--- |
-| Identity | `boutID`, `strideIndex`, `bird`, `colourCode`, `study`, `dataset`, `dateCode`, `trialNo`, `mass_kg`, `L0_m`, `BW_N`, `gaitLabelHand`, `gaitCodeHand` | `strideIndex` joins to the per-step table via the two steps it spans |
+| Identity | `boutID`, `strideIndex`, `session`, `bird`, `colourCode`, `study`, `dataset`, `dateCode`, `trialNo`, `mass_kg`, `L0_m`, `BW_N`, `gaitLabelHand`, `gaitCodeHand` | `strideIndex` joins to the per-step table via the two steps it spans |
 | Sample flag | `analysisSample`, `outlier` | The stride table carries no `gait` column; join to the per-step table for gait |
 | Timing | `stridePeriod`, `strideFreq`, `contactTime`, `flightTime`, `hasFlight`, `dutyFactor`, `dutyFactor_gf`, `groundedFrac`, `dutyLimb` (and `_n` forms) | Per stride rather than per step |
 | Speed and distance | `meanSpeed`, `strideLength`, `Froude`, `accelForeAft`, `accelSign`, `vertExcursion` (and `_n` forms) | |
@@ -331,23 +363,26 @@ The tidy per-stride table: 1678 rows, 77 columns, one row per stride (two steps)
 | Steadiness | `fracEG`, `fracDE`, `fracDV`, `accClass`, `accClass_fa` | Steadiness is defined at stride grain; the per-step table inherits it |
 | Descriptors | `recovery`, `congruity`, `collisionAngle`, `collisionFraction`, `CoTmech`, `hodoArea`, `hodoArea_n`, `gaitHodo`, `mechHodo` | |
 
-Pendular recovery is $R = (W_f + W_v - W_{tot})/(W_f + W_v)$, each $W$ the sum of positive increments over the stride, and is defined per stride because the CoM returns to its state over a full stride.
+Pendular recovery is R = (W_f + W_v - W_tot)/(W_f + W_v), each W the sum of positive increments over the stride, and is defined per stride because the CoM returns to its state over a full stride.
 
 ---
 
 ## morphology_multi.csv
 
-One row per study session (18 rows, 7 columns).
+One row per study session (30 rows, 10 columns).
 
 | Column     | Units | Description                                                              |
 | :--------- | :---- | :------------------------------------------------------------------------ |
+| `session`  | -     | Session key, `bird\|YYYY-MM`; the grain at which mass and leg length are set |
 | `bird`     | -     | Study-session bird code                                                  |
 | `study`    | -     | Study tag                                                                |
+| `sessionMonth` | - | Month of the recording session, `YYYY-MM`                                 |
 | `mass_kg`  | kg    | Body mass for that session                                               |
 | `L0_m`     | m     | Leg length, the median CoM-to-foot distance at touchdown over the session's steps with no aerial phase |
-| `Lnorm_m`  | m     | Geometric length scale, $0.20\,m^{1/3}$, reported for reference; it is not the normaliser used |
+| `Lnorm_m`  | m     | Geometric length scale, 0.20 m^(1/3), reported for reference; it is not the normaliser used |
 | `nSteps`   | -     | Steps detected for that session                                          |
 | `nStrides` | -     | Strides detected for that session                                        |
+| `L0_source`| -     | How `L0_m` was set for that session: `session_nonAerial_median`, `bird_nonAerial_median` or `withinSample_allometry` |
 
 ---
 
@@ -355,8 +390,16 @@ One row per study session (18 rows, 7 columns).
 
 Source-file provenance, one row per trial (334 rows, 12 columns): `boutID`, `bird`, `colourCode`, `study`, `dateCode`, `trialNo`, `trialStem`, `bodyMass_kg`, `windowMode`, and the `forceFile`, `markerFile` and `logFile` paths of the raw recordings.
 
-Paths are given relative to the root of the `LEVEL_collation` archive, for example
-`OtherSpecies_byDate/Guinea fowl/Blum_Surface_2012-06/2012-06-25/gf_red_LE0cm_0006.txt`, so the roster is portable across machines. The pipeline locates that archive at run time, under the project folder or one level above it, and joins these paths to whichever it finds. `logFile` is empty for the trials that have none. The raw force and marker files are not part of this deposit; the roster records which source file each trial came from.
+Paths are relative to the root of the source archive they were collated in, for example
+`OtherSpecies_byDate/Guinea fowl/Blum_Surface_2012-06/2012-06-25/gf_red_LE0cm_0006.txt`, so they carry no machine or user name. `logFile` is `NA` for the trials that have none: only the 68 `Blum_Surface_2012-06` trials were recorded with one.
+
+The raw force and marker files are not part of this deposit and are not needed to reproduce the analysis, which runs from `per_trial_timeseries/`. This table is provenance: it records which source recording each trial came from, so a trial here can be traced back to the collection it belongs to.
+
+---
+
+## force_sign_corrections.csv
+
+One row per corrected force column (boutID, axis, column, reason): the trials and the axis, `ml` or `fa`, whose ground reaction force has the opposite sign in the previous version. Version History describes the correction.
 
 ---
 
@@ -390,54 +433,84 @@ Units are SI: force in newtons, position in meters, velocity in meters per secon
 
 ## Normalisation
 
-Data are normalised into dimensionless quantities following dynamic similarity, using each session's body mass $m$, leg length $L_0$ and $g = 9.81$ m/s². Columns ending `_n` carry the dimensionless form.
+Data are normalised into dimensionless quantities following dynamic similarity, using each session's body mass m, leg length L₀ and g = 9.81 m/s². Columns ending `_n` carry the dimensionless form.
 
 | Quantity | Normalisation factor | Formula        |
 | :------- | :------------------- | :------------- |
-| Force    | Body weight          | $mg$           |
-| Length   | Leg length           | $L_0$          |
-| Velocity | Froude velocity      | $\sqrt{gL_0}$  |
-| Time     | Pendular period      | $\sqrt{L_0/g}$ |
-| Frequency| Inverse pendular period | $\sqrt{g/L_0}$ |
-| Work, energy | Body weight times leg length | $mgL_0$ |
-| Impulse  | Body weight times pendular period | $mg\sqrt{L_0/g}$ |
-| Loop area| Gravity times leg length | $gL_0$      |
+| Force    | Body weight          | mg           |
+| Length   | Leg length           | L₀          |
+| Velocity | Froude velocity      | √(gL₀)  |
+| Time     | Pendular period      | √(L₀/g) |
+| Frequency| Inverse pendular period | √(g/L₀) |
+| Work, energy | Body weight times leg length | mgL₀ |
+| Impulse  | Body weight times pendular period | mg√(L₀/g) |
+| Loop area| Gravity times leg length | gL₀      |
 
-Dimensionless speed is $u = v/\sqrt{gL_0}$ and the Froude number is $u^2$.
+Dimensionless speed is u = v/√(gL₀) and the Froude number is u².
 
 ---
 
 ## Processing Workflow
 
-The analysis code is on GitHub at [https://github.com/NeuroMechLab/GuineaFowlGait-code](https://github.com/NeuroMechLab/GuineaFowlGait-code), tagged `v1.2.1`. `PIPELINE.md` there gives the full run order and maps every output to the manuscript element that uses it. The sequence that produces the tables in this package is:
+The analysis code is on GitHub at [https://github.com/NeuroMechLab/GuineaFowlGait-code](https://github.com/NeuroMechLab/GuineaFowlGait-code), tagged `v1.3.0`. `PIPELINE.md` there gives the full run order and maps every output to the manuscript element that uses it.
 
-### MATLAB phase
+### Reproducing the analysis from this package
 
-**Step 1: Build the trial roster.** `GaitSelMulti_BuildRoster.m` pairs the marker and force files of the three collections and seeds body mass, writing `trialRoster_multi.csv`.
+The release runs from this package. The per-trial files carry the net ground reaction force, the time base, the kinematic CoM proxy the reconstruction is path-matched to, both foot marker tracks, and body mass, leg length and g, which is everything the measurement kernels read, so the raw force-plate and marker recordings are not needed.
 
-**Step 2: Import, reconstruct, detect, measure.** `GaitSelMulti_BatchProcess.m` imports each trial, resolves the fore-aft axis, reconstructs the CoM, detects gait events at foot-marker touchdowns, and computes the per-step and per-stride measures.
+Unzip `per_trial_timeseries.zip` and `mean_stepcycle_by_gait_speed.zip` inside the package, put the package at `GaitSel_DryadPackage_AllGF/` beside `_MatlabProcessingCode/`, then:
 
-**Step 3: Normalise and write the tidy tables.** `GaitSelMulti_ExportTidyCSV.m` derives per-session `L0`, adds the dimensionless and leg-stiffness columns, and flags outliers, writing `perStep_long.csv`, `perStride_long.csv` and `morphology.csv`.
+    matlab -batch "addpath(genpath('_MatlabProcessingCode')); \
+        GaitSelMulti_BatchFromDryad; GaitSelMulti_ExportTidyCSV; \
+        GaitSelMulti_QCGate; GaitSelMulti_ExportCycleTraces"
+    cd _RAnalysis && Rscript run_all.R
 
-**Step 4: Quality-control gate.** `GaitSelMulti_QCGate.m` applies the work-energy and drift criteria and the energy-grade steadiness criterion. This is the single definition of the retained set, computed once in MATLAB so that this package and the statistics agree.
+**Step 1.** `GaitSelMulti_BatchFromDryad.m` rebuilds each trial from `per_trial_timeseries/` and re-runs the reconstruction (`GaitSel_ReconstructCoM`), the gait-event detection at foot-marker touchdowns (`GaitSel_DetectGaitEvents` with `GaitSel_FootContacts`) and the per-step and per-stride reduction (`GaitSel_PerStepStrideMeasures`).
 
-**Step 5: Build this package.** `GaitSelMulti_ExportDryad.m` writes the per-trial time series, `trial_index.csv` and `steps_index.csv`. `GaitSelMulti_ExportCycleTraces.m` then writes the per-step cycle traces the figures read, and `GaitSel_ExportDryadMeanCycles.m` writes `mean_cycles`.
+**Step 2.** `GaitSelMulti_ExportTidyCSV.m` derives per-session `L0`, adds the dimensionless and leg-stiffness columns and flags outliers, writing `perStep_long.csv`, `perStride_long.csv` and `morphology.csv`.
 
-### R phase
+**Step 3.** `GaitSelMulti_QCGate.m` applies the work-energy and drift criteria and the energy-grade steadiness criterion. This is the single definition of the retained set, computed once in MATLAB so that this package and the statistics agree.
 
-**Step 6: Clean and fix the analysis sample.** `Rscript run_all.R` runs the numbered chain. `01_load.R` reads the tidy tables and builds the individual grouping; `02_clean.R` applies the MATLAB quality-control and steadiness flags; `03_step_descriptors.R` adds the collision angle and touchdown energy; `04_analysis_sample.R` fixes the analysis sample of 2580 steps and 944 strides and writes the label table.
+**Step 4.** `GaitSelMulti_ExportCycleTraces.m` writes the per-step cycle traces the figures read, also from `per_trial_timeseries/`.
 
-**Step 7: Figures, tables and statistics.** The remaining numbered scripts produce them. `21_dryad_labels.R` writes this package's `perStep_long_multi.csv` and `perStride_long_multi.csv`, adding `gait`, `gait4`, `gaitHodo`, `steadiness`, `analysisSample` and `exclusionReason` to the MATLAB tidy tables.
+**Step 5.** `Rscript run_all.R` runs the numbered R chain: `01_load.R` reads the tidy tables and builds the individual grouping, `02_clean.R` applies the quality-control and steadiness flags, `03_step_descriptors.R` adds the collision angle and touchdown energy, `04_analysis_sample.R` fixes the analysis sample of 2580 steps and 944 strides, and the remaining scripts produce every figure, table and statistic. `GaitSel_ExportDryadMeanCycles.m` rebuilds `mean_stepcycle_by_gait_speed/` afterwards, since it reads the R phase's speed-bin thresholds.
 
-Step 5 reads the label table that step 6 writes, so `steps_index.csv` carries the gait and sample columns after `GaitSelMulti_ExportDryad.m` is run once more following the R phase.
+Nothing is written back into this package: the re-run's outputs go to `rerun/` and `SavedResults/`, so a second run starts from the archived state. `rerun/reconstruction_check.csv` compares the re-run against the values these files already carry. Over all 334 trials it agrees to 0.000 mm on the vertical CoM path and on the drift, to 0 on the work-energy identity ratio, and on the number of steps cut for every trial.
+
+One column cannot be reproduced from this package. `dutyLimb`, the plate-based duty-factor cross-check, is estimated from the per-plate vertical force, which is not deposited, so it comes back as `NA`. The duty factor the paper reports is the marker-based `dutyFactor` and is unaffected.
+
+### How this package was made
+
+The per-trial files themselves come from the raw force-plate and marker recordings, which are not part of this deposit. Those were paired into a trial roster, imported and windowed, the horizontal force axes resolved to anatomical fore-aft and medio-lateral, the CoM offset applied to the marker proxy and the foot tracks de-spiked, before the reconstruction and measurement steps above. That import layer has no input a reader can supply and is not part of the code release.
 
 ### Reconstruction method
 
-The CoM is reconstructed by path-matched double integration of the ground reaction force over the whole on-plate bout: $F = ma$, with one set of integration constants per axis (initial position, initial velocity and an acceleration-baseline offset) fitted to minimise departure from the kinematic CoM proxy. The net force is low-pass filtered at 50 Hz with a zero-phase Butterworth filter. The analysis window for each trial is found automatically as the span where the bird is both tracked and on the plates. Because the two rig generations mount their plates differently relative to the motion-capture frame, the horizontal force axes are assigned to anatomical fore-aft and medio-lateral by matching the cumulative horizontal impulse to the kinematic travel direction, using a consensus across each collection date.
+The CoM is reconstructed by path-matched double integration of the ground reaction force over the whole on-plate bout: F = ma, with one set of integration constants per axis (initial position, initial velocity and an acceleration-baseline offset) fitted to minimise departure from the kinematic CoM proxy. The net force is low-pass filtered at 50 Hz with a zero-phase Butterworth filter. The analysis window for each trial is found automatically as the span where the bird is both tracked and on the plates. The orientation of the force plates relative to the motion-capture frame is fixed within a collection date and differs between collection years, so the horizontal force axes are assigned once per date. Fore-aft is the plate axis, with the sign, whose cumulative impulse best follows the kinematic fore-aft velocity over all of that date's trials. Medio-lateral is the other plate axis, with the sign that keeps the plate frame and the motion-capture frame both right-handed.
 
-The proxy is the midpoint of the cranial and caudal back markers, which lies above and behind the whole-body CoM, so a fore-aft and a vertical offset are applied to it before any geometry is taken. The fore-aft offset is fitted by driving the net pitch impulse about the CoM to zero over stride-complete windows, within anatomical bounds set by the two back markers. That condition does not identify the vertical offset, because the fore-aft impulse of the summed force approaches zero over a whole stride, so the vertical offset is set from anatomical scaling as $-0.2625\,L_\mathrm{iso}$ with $L_\mathrm{iso} = 0.20\,m^{1/3}$. Offsets are fitted for each bird in each recording session, because marker placement was renewed at each session. `comProxy_*` in the per-trial series carries them, so leg length, leg angle and CoM height above the foot all refer to one CoM. Energy fluctuations are unaffected, because a constant shift cancels in a height change.
+The proxy is the midpoint of the cranial and caudal back markers, which lies above and behind the whole-body CoM, so a fore-aft and a vertical offset are applied to it before any geometry is taken. The fore-aft offset is fitted by driving the net pitch impulse about the CoM to zero over stride-complete windows, within anatomical bounds set by the two back markers. That condition does not identify the vertical offset, because the fore-aft impulse of the summed force approaches zero over a whole stride, so the vertical offset is set from anatomical scaling as -0.2625 L_iso with L_iso = 0.20 m^(1/3). Offsets are fitted for each bird in each recording session, because marker placement was renewed at each session. `comProxy_*` in the per-trial series carries them, so leg length, leg angle and CoM height above the foot all refer to one CoM. Energy fluctuations are unaffected, because a constant shift cancels in a height change.
 
-Reconstruction quality per study, as median work-energy identity $r$ and median vertical drift: RVC 0.98 and 7.8 mm, DropVsPothole 1.00 and 7.5 mm, Surface 0.96 and 4.9 mm.
+Reconstruction quality per study, as median work-energy identity r and median vertical drift: RVC 0.99 and 7.7 mm, DropVsPothole 1.00 and 7.5 mm, Surface 0.97 and 4.9 mm.
+
+---
+
+## Version History
+
+### This version: horizontal force sign correction
+
+This version corrects two errors in the sign of the horizontal ground reaction force (`F_ml_N`, `F_fa_N`; `GRF_N` in the .mat files).
+
+* Medio-lateral force, in all 74 trials recorded on 2008-11-20, 2008-11-21, 2009-11-17, 2009-11-18, 2009-11-19. In these sessions the force plates were turned 180 degrees relative to the motion-capture frame, and the medio-lateral axis had been given the orientation of the other sessions.
+* Fore-aft force, in 4 trials whose own sign fit disagreed with the other trials of their collection date: `rvc_red_20081120_L00cm_0006`, `surf_noc_20120626_LE0cm_0003`, `surf_red_20120625_LE0cm_0004`, `surf_yel_20120627_LE0cm_0009`. `rvc_red_20081120_L00cm_0006` is one of the four `rvc_red` trials of 2008-11-20 whose force and marker files come from different recordings; its sign follows the other trials of that date, and none of those four trials has a step in the analysis sample.
+
+Integrated over body mass, the listed force components changed the CoM velocity in the direction opposite to the velocity of the CoM proxy, the back-marker midpoint. With the corrected signs, the reconstructed CoM follows the proxy: over the corrected trials, the median root-mean-square distance between them in the medio-lateral direction is 7.5 mm, against 27.6 mm in the previous version.
+
+Recomputed from the corrected force: the CoM path and velocity, the drift and the work-energy identity of the corrected trials; the leg length L0 of the 12 sessions in which it changes by more than one micrometre, since L0 is a median CoM-to-foot distance (the largest changes are `rvc_yel|2008-11`, 0.195 to 0.163 m, and `rvc_blu|2008-11`, 0.203 to 0.187 m); every quantity normalised by L0 in those sessions; the per-step and per-stride measures, labels and flags of the 95 affected trials; and the mean step cycles. 2 of the affected trials lie outside the corrected sessions: the mis-cut-cycle filter compares each stride with strides of similar dimensionless speed in all trials, and two of their flags change. Every other row and per-trial file is identical to the previous version.
+
+In the November 2008 sessions of `rvc_yel` and `rvc_blu`, the corrected leg lengths are shorter than in the same birds' later sessions (`rvc_yel` 0.163 m against 0.197 m in April 2009, `rvc_blu` 0.187 m against 0.200 m in May 2009), because the height of the CoM above the stance foot at touchdown is lower in that collection (0.134 m against 0.180 m for `rvc_yel`), which is likely due to differences in back-marker placement between recording sessions; these two sessions provide 30 of the 2578 analysis-sample steps, so the difference is unlikely to shift any major result of the article.
+
+The analysis sample is 2578 steps and 942 strides, against 2580 and 944. Of the 89 values the article reports, 51 change. The three crossover speeds are u = 1.057 (Froude 1.116), u = 0.560 (Froude 0.313) and u = 0.576 (Froude 0.332) (article: u = 1.056 (Froude 1.114), u = 0.557 (Froude 0.310) and u = 0.576 (Froude 0.332)); the agreement between the two-cluster split and rotation sense is 87.7% (2260 of 2578 steps) (article: 87.7% (2262 of 2580 steps)); and the leg-length range is 0.163-0.232 m (article: 0.192-0.232 m).
+
+Although the numbers shift slightly, none of the claims in the paper are changed by this update.  The main claims hold at the precision reported in the paper. Crossover speeds: rotation sense u = 0.58 (0.46 to 0.63) and footfall u = 1.06 (1.01 to 1.09) are unchanged when rounded as in the text. The energy-phase crossover stays at u = 0.56. The rotation-sense and energy-phase intervals still overlap, and the footfall transition is still roughly twice as fast. Agreement with the cluster split: 87.7% unchanged. Descriptive ordering across walk, grounded run and aerial run: each median moves by at most 0.4 units, and the order is the same. Leg stiffness: 7.1, 6.2 and 9.7 for those three gait categories is unchanged.
 
 ---
 

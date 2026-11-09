@@ -169,10 +169,7 @@ clustering agreement against the classic criterion, the loop-area recomputation 
 crossover-curve fits, the rotation-sense model note, `hodograph_crossover_check.png` (the loops
 the self-crossing test flags and the loops it does not, drawn closed so the count can be checked
 by eye), and a markdown mirror of the four-cell workbook. Each is kept as the evidence behind a
-methods decision or a reviewer response. One
-subdirectory sits alongside them, `dryad_readme_blocks/`, holding the three counted blocks that
-the data package's README quotes, so that README can be rebuilt from the pipeline's own outputs
-rather than hand-edited.
+methods decision or a reviewer response.
 
 ## Figure sizes
 
