@@ -4,17 +4,19 @@ function [stepRows, strideRows] = GaitSel_PerStepStrideMeasures(B, E)
 %   [stepRows, strideRows] = GaitSel_PerStepStrideMeasures(B, E) reduces a
 %   reconstructed bout B (GaitSel_ReconstructCoM) and its gait events E
 %   (GaitSel_DetectGaitEvents) to one row per step (forces, timing, per-step
-%   speed and fore-aft acceleration, virtual leg) and one row per stride (CoM
-%   energy exchange: kinetic and gravitational potential energy fluctuations,
-%   pendular recovery, congruity, and an objective gait classification).
+%   speed and fore-aft acceleration, virtual leg, CoM energy exchange over the step)
+%   and one row per stride (the same energy exchange over the stride). Each row has the
+%   hodograph-based gait label.
 %
-%   Steps span the cut samples E.stepIdx (foot-marker touchdowns); a stride is two
-%   steps. Stance within a step is the grounded window (E.stanceOn:E.stanceOff). Energy
-%   exchange follows Cavagna, Heglund & Taylor (1977): forward kinetic energy
+%   Steps span the cut samples E.stepIdx (foot-marker touchdowns). Strides tile the
+%   steps in pairs from the first step: stride s0 spans steps s0 and s0+1, for odd s0
+%   up to nStep-2. Stance within a step is the grounded window (E.stanceOn:E.stanceOff).
+%   Energy exchange follows Cavagna, Heglund & Taylor (1977): forward kinetic energy
 %   Ekf = 1/2 m (vml^2 + vfa^2); vertical energy Ev = m g h + 1/2 m vv^2;
 %   recovery R = (Wf + Wv - Wtot)/(Wf + Wv), each W the sum of positive
-%   increments over the stride. Congruity is the fraction of the stride in which
-%   Ekf and Ev change in the same direction (high = in-phase bouncing).
+%   increments over the row's window, step or stride. Congruity is the fraction of
+%   that window in which Ekf and Ev change in the same direction (high = in-phase
+%   bouncing).
 %
 %   Gait is classified by two threshold-free mechanistic features: aerial phase
 %   present (aerial run), else grounded and split by the hodograph rotation sense
@@ -106,7 +108,7 @@ function [stepRows, strideRows] = GaitSel_PerStepStrideMeasures(B, E)
     end
 
     % --------------------------- per stride ------------------------------
-    starts = 1:2:(nStep-2);                           % non-overlapping tiling: stride s0 = steps s0, s0+1
+    starts = 1:2:(nStep-2);                           % non-overlapping tiling: stride s0 = steps s0, s0+1, s0 <= nStep-2
     strideRows = {};
     for s0 = starts
         ii = si(s0):si(s0+2);                         % stride = two steps

@@ -1,18 +1,22 @@
-# 21_dryad_labels.R — update the Dryad package's per-step and per-stride tables so they carry the
+# 21_dryad_labels.R — write the Dryad package's per-step and per-stride tables so they carry the
 # gait labels the paper uses:
 #   gait, gait4       the classification the paper uses (aerial phase x KE-PE congruity)
 #   gaitHodo          the hodograph-based label, named for what it is, since the paper tests
 #                     rotation sense against the classification
 #   analysisSample    1 for the rows behind every number in the paper, 0 otherwise
 #   exclusionReason   why a row is not analysed
-# The MATLAB-written originals under _RAnalysis/data/ are untouched; only the package copies are
-# rewritten, and only in their label columns.
+# The MATLAB-written originals under _RAnalysis/data/ are untouched. The labelled tables are
+# written to output_internal/dryad_tables/, and into the package itself only when the deposit is
+# being built (environment variable GAITSEL_BUILD_DEPOSIT=1), so a reader re-running the analysis
+# from the deposit leaves the published files as they are.
 suppressPackageStartupMessages({library(dplyr)})
 
-DRY <- file.path("..", "GaitSel_DryadPackage_AllGF")
-if (!dir.exists(DRY)) {
+DRY <- if (Sys.getenv("GAITSEL_BUILD_DEPOSIT") == "1") file.path("..", "GaitSel_DryadPackage_AllGF") else
+  file.path("output_internal", "dryad_tables")
+if (Sys.getenv("GAITSEL_BUILD_DEPOSIT") == "1" && !dir.exists(DRY)) {
   cat("21_dryad_labels: no Dryad package directory; skipped.\n")
 } else {
+  dir.create(DRY, showWarnings = FALSE, recursive = TRUE)
   lab <- readr::read_csv("data/step_labels_analysis.csv", show_col_types = FALSE)
 
   # This script REBUILDS the deposit from the MATLAB tidy tables, so it needs the raw ones, where
@@ -54,8 +58,8 @@ if (!dir.exists(DRY)) {
   readr::write_csv(st, file.path(DRY, "perStride_long_multi.csv"))
 
   cat(sprintf(paste0("21_dryad_labels: per-step %d rows (%d analysed), per-stride %d rows ",
-                     "(%d analysed); gait labels replaced with the classification the paper uses.\n"),
-              nrow(ps), sum(ps$analysisSample), nrow(st), sum(st$analysisSample)))
+                     "(%d analysed), written to %s.\n"),
+              nrow(ps), sum(ps$analysisSample), nrow(st), sum(st$analysisSample), DRY))
   print(table(gait = ps$gait[ps$analysisSample == 1], useNA = "no"))
   }
 }

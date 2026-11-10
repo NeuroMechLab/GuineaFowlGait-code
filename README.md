@@ -20,8 +20,8 @@ contains the other, and the section below says how they meet. This release runs 
 version of the package, which corrects the sign of the horizontal ground reaction force in
 77 trials; the package README's Version History describes the correction.
 
-**Version:** `v1.3.0`, cut from the working repository at commit
-`bead51aa9dd344467be7ecbd6e2610076995aa97`. This repository keeps its revision history
+**Version:** `v1.3.1`, cut from the working repository at commit
+`456eae52b3d0f95ae1d8b9bcf1a4889894b03ec3`. This repository keeps its revision history
 from v1.0.0 forward: each release is tagged, and the commits between tags are the changes made
 since the version the paper cites.
 
@@ -79,17 +79,19 @@ from the deposited per-trial series, then writes the tidy tables and the quality
 R phase reads. The gate is computed once, in MATLAB, so R reads rather than redefines it, which is
 what keeps one definition of the analyzed set.
 
-Nothing writes into the data package. The re-run's outputs go to `rerun/` and
-`_MatlabProcessingCode/SavedResults/`, so a second run starts from the archived state.
+Nothing writes into the data package. The re-run's outputs go to `rerun/`,
+`_MatlabProcessingCode/SavedResults/` and `_RAnalysis/output_internal/dryad_tables/`, so a second
+run starts from the archived state.
 
 `rerun/reconstruction_check.csv` compares the re-run against the values the package carries for
 each trial. Over all 334 deposited trials it agrees to 0.000 mm on the vertical center-of-mass
-path and on the drift, to 0 on the work-energy identity ratio, and on the number of steps cut for
+path and on the drift, to within 3e-8 on the work-energy correlation, and on the number of steps cut for
 every trial.
 
-The raw force-plate and marker recordings are not part of this release and are not needed. One
-column depends on them: `dutyLimb`, the plate-based duty-factor cross-check, comes back empty. The
-duty factor the paper reports is the marker-based one and is unaffected.
+The raw force-plate and marker recordings are not part of this release and are not needed. Two
+columns come back empty: `dutyLimb`, the plate-based duty-factor cross-check, which needs the
+per-plate force, and `trialNo`, which is the last field of `boutID`. The duty factor the paper
+reports is the marker-based one and is unaffected.
 
 To run the R phase alone, once `_RAnalysis/data/` has been written: `cd _RAnalysis && Rscript run_all.R`.
 
@@ -128,7 +130,7 @@ The Dryad package carries its own license terms for the data.
 Cite the paper. If you need to cite the code specifically, cite the archived release:
 
     Daley, M. A. and Birn-Jeffery, A. (2026). Guinea fowl gait selection: analysis code,
-    version v1.3.0. https://github.com/NeuroMechLab/GuineaFowlGait-code
+    version v1.3.1. https://github.com/NeuroMechLab/GuineaFowlGait-code
 
 ## Contact
 

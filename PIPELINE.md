@@ -35,17 +35,21 @@ them the paper used: `GaitSel_ReconstructCoM` for the path-matched double integr
 `GaitSel_PerStepStrideMeasures` for the per-step and per-stride reduction. `helpers/` holds the
 kernels those three call, including `PathMatchedDoubleIntegration.m`.
 
-Nothing writes into the data package. Step 1's outputs go to `rerun/` and `SavedResults/`, so a
-second run starts from the archived state rather than from the first run's results.
+Nothing writes into the data package. Step 1's outputs go to `rerun/` and `SavedResults/`, R
+script 21 writes its two labelled tables to `_RAnalysis/output_internal/dryad_tables/`, and the
+mean cycles go to `rerun/mean_stepcycle_by_gait_speed/`, so a second run starts from the archived
+state rather than from the first run's results. Only a build of the deposit itself, with the
+environment variable `GAITSEL_BUILD_DEPOSIT=1`, writes into the package.
 
 `rerun/reconstruction_check.csv` compares the re-run against the values the package carries for
-the same trial: the vertical centre-of-mass path, the drift, the work-energy identity ratio and the
+the same trial: the vertical centre-of-mass path, the drift, the work-energy correlation and the
 number of steps cut. Over all 334 deposited trials it agrees to 0.000 mm on the CoM path and the
-drift, to 0 on the work-energy ratio, and on the step count for every trial.
+drift, to within 3e-8 on the work-energy correlation, and on the step count for every trial.
 
-One column cannot be reproduced from the package. `dutyLimb`, the plate-based duty-factor
-cross-check, is estimated from the per-plate vertical force, which is not deposited, so it comes
-back empty. The duty factor the paper reports is the marker-based one and is unaffected.
+Two columns come back empty from the package. `dutyLimb`, the plate-based duty-factor
+cross-check, is estimated from the per-plate vertical force, which is not deposited. `trialNo` is
+not stored in the per-trial series; it is the last field of `boutID`. The duty factor the paper
+reports is the marker-based one and is unaffected.
 
 The quality-control gate is computed in MATLAB, once, in step 3, so the R phase reads it rather
 than redefining it. That is what keeps one definition of the analyzed set.
@@ -58,13 +62,15 @@ than redefining it. That is what keeps one definition of the analyzed set.
     cd _RAnalysis && Rscript run_all.R
 
 The R phase alone reproduces every figure, table and statistic once the four MATLAB steps have
-written `_RAnalysis/data/`. Running the whole sequence from the package gives 3842 detected steps
-and 1678 strides, 2620 steps and 1129 strides through the quality-control gate, and an analysis
-sample of 2580 steps and 944 strides over 243 trials, which is what the paper reports.
+written `_RAnalysis/data/`. Running the whole sequence from the current version of the package
+gives 3842 detected steps and 1678 strides, 2618 steps and 1126 strides through the
+quality-control gate, and an analysis sample of 2578 steps and 942 strides over 243 trials. The
+paper reports 2580 steps and 944 strides, computed from the earlier version of the package; the
+package README's Version History lists the differences.
 
-`GaitSel_ExportDryadMeanCycles.m` rebuilds the package's own `mean_stepcycle_by_gait_speed/` from
-the per-trial series. It reads `output/speedbin_thresholds_R.csv`, so it runs after the R phase,
-and it is only needed to regenerate that part of the package.
+`GaitSel_ExportDryadMeanCycles.m` rebuilds the mean step cycles from the per-trial series and
+writes them to `rerun/mean_stepcycle_by_gait_speed/`, where they can be compared with the
+package's own. It reads `output/speedbin_thresholds_R.csv`, so it runs after the R phase.
 
 ## R phase: tidy tables to figures, tables and statistics
 
@@ -98,7 +104,7 @@ count, so that every loop descriptor reads the curve the classifier's signed are
 | 18 | `18_sfig_pc_steadiness.R` | Fig. S3, Table S1 |
 | 19 | `19_table_gait_summary.R` | Results 2, 3 |
 | 20 | `20_table_gait4_summary.R` | Tables 1, S4, Results 1 to 5, Methods 4, Discussion 5 |
-| 21 | `21_dryad_labels.R` | the Dryad package's two tidy tables |
+| 21 | `21_dryad_labels.R` | the Dryad package's two tidy tables, in `output_internal/dryad_tables/` (in the package itself when `GAITSEL_BUILD_DEPOSIT=1`) |
 
 `run_all.R` lists each script's output files beside its `source()` call.
 
@@ -169,7 +175,8 @@ clustering agreement against the classic criterion, the loop-area recomputation 
 crossover-curve fits, the rotation-sense model note, `hodograph_crossover_check.png` (the loops
 the self-crossing test flags and the loops it does not, drawn closed so the count can be checked
 by eye), and a markdown mirror of the four-cell workbook. Each is kept as the evidence behind a
-methods decision or a reviewer response.
+methods decision or a reviewer response. `dryad_tables/` holds the
+package's two labelled tidy tables as script 21 writes them outside a deposit build.
 
 ## Figure sizes
 

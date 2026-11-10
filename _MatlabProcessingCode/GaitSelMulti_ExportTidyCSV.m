@@ -193,7 +193,7 @@ function X = addLegStiffness(X, g)
 %ADDLEGSTIFFNESS  Dimensionless leg-spring stiffness per step (Blum et al. 2009 method C).
 %
 %   Adds two columns to the per-step tidy table:
-%     legCompress_n  leg compression as a fraction of touchdown leg length, dL/L0
+%     legCompress_n  leg compression as a fraction of the session leg length, dL/L0
 %     kLeg_n         dimensionless leg stiffness k L0/(m g), i.e. body weights per leg
 %                    length (the Geyer, Seyfarth & Blickhan 2006 convention)
 %

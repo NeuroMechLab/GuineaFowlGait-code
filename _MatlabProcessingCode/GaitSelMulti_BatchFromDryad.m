@@ -23,9 +23,10 @@ function GaitSelMulti_BatchFromDryad(opts)
 %   the same trial: the vertical centre-of-mass path, the drift, the work-energy identity and the
 %   number of steps cut. That is the check that the re-run reproduces the published analysis.
 %
-%   ONE COLUMN CANNOT BE REPRODUCED. dutyLimb is estimated from the per-plate vertical force,
-%   which the deposit does not carry, so it comes back empty. The paper's duty factor is the
-%   marker-based one and is unaffected.
+%   TWO COLUMNS CANNOT BE REPRODUCED. dutyLimb is estimated from the per-plate vertical force,
+%   which the deposit does not carry, and trialNo, the last field of boutID, is not stored in the
+%   per-trial series; both come back empty. The paper's duty factor is the marker-based one and is
+%   unaffected.
 %
 %   See also: GaitSelMulti_ExportTidyCSV, GaitSelMulti_QCGate, GaitSel_ReconstructCoM.
 

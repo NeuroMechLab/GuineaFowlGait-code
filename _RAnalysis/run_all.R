@@ -87,8 +87,9 @@ source("R/20_table_gait4_summary.R")# Tables 1 and S4, and the leg-stiffness row
                                    #   output_internal/GaitSummary_FourCell.md, kleg_*.csv,
                                    #   output_internal/kleg_vs_speed.{png,pdf}
 source("R/21_dryad_labels.R")      # writes the Dryad package's two tidy tables
-                                   #   ../GaitSel_DryadPackage_AllGF/perStep_long_multi.csv,
-                                   #   ../GaitSel_DryadPackage_AllGF/perStride_long_multi.csv
+                                   #   output_internal/dryad_tables/perStep_long_multi.csv,
+                                   #   output_internal/dryad_tables/perStride_long_multi.csv
+                                   #   (into the package when GAITSEL_BUILD_DEPOSIT=1)
 
 cat("\nR pipeline complete. Paper outputs in _RAnalysis/output/,",
     "validation products in _RAnalysis/output_internal/.\n")

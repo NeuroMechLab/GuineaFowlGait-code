@@ -15,7 +15,15 @@ function GaitSel_ExportDryadMeanCycles(opts)
     P = projectPaths();
     root  = getOpt(opts, 'root', fullfile(P.root, 'GaitSel_DryadPackage_AllGF'));
     tsDir = fullfile(root, 'per_trial_timeseries');
-    outDir = fullfile(root, 'mean_stepcycle_by_gait_speed');
+    % Written into the package only when the deposit is being built (environment variable
+    % GAITSEL_BUILD_DEPOSIT=1); otherwise to rerun/, so a re-run from the deposit leaves the
+    % published files as they are. opts.outDir overrides both.
+    if strcmp(getenv('GAITSEL_BUILD_DEPOSIT'), '1')
+        outDir = fullfile(root, 'mean_stepcycle_by_gait_speed');
+    else
+        outDir = fullfile(P.rerun, 'mean_stepcycle_by_gait_speed');
+    end
+    outDir = getOpt(opts, 'outDir', outDir);
     if ~exist(outDir, 'dir'), mkdir(outDir); end
     g = 9.81; NP = 100; gaits = {'walk', 'groundedRun', 'aerialRun'};
 
@@ -80,10 +88,11 @@ function GaitSel_ExportDryadMeanCycles(opts)
         end
     end
 
-    % Slow/fast threshold: the gait's median Froude over ALL classified steps, read from
-    % _RAnalysis/output/speedbin_thresholds_R.csv, which 05_mean_traces.R writes and the paper's
-    % figures use. Fixing the threshold over the full set holds it steady across the steadiness
-    % classes, and reading it from that one file makes the package's bins the figure's bins.
+    % Slow/fast threshold: the gait's median Froude over its analysis-sample steps of every
+    % steadiness class, read from _RAnalysis/output/speedbin_thresholds_R.csv, which
+    % 05_mean_traces.R writes and the paper's figures use. Taking the median over all steadiness
+    % classes holds the threshold steady across them, and reading it from that one file makes the
+    % package's bins the figure's bins.
     % Compared in FROUDE space (u^2 against medianFroude), the comparison R makes, rather than
     % thresholding u at sqrt(medianFroude): the square root rounds, and a step sitting on the
     % threshold then falls the other way.
