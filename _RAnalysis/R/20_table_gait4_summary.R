@@ -21,7 +21,7 @@
 # (09_gait_continuity.R) so all three quote the same component.
 #
 # Writes output/GaitSummary_FourCell.xlsx (tables, per-cell n, composition) plus one CSV per
-# table and a markdown rendering for drafting.
+# table and a markdown rendering.
 suppressPackageStartupMessages({library(dplyr); library(openxlsx)})
 if (!exists("theme_daley")) source("R/lib_theme.R")
 if (!dir.exists("output")) dir.create("output")

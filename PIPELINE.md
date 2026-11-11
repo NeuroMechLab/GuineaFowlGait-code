@@ -74,8 +74,7 @@ package's own. It reads `output/speedbin_thresholds_R.csv`, so it runs after the
 
 ## R phase: tidy tables to figures, tables and statistics
 
-`_RAnalysis/run_all.R` sources scripts 01 to 21 in this order. Script 22 is run separately, from
-the project root, after the pipeline finishes. Files named `lib_*.R` hold shared definitions and
+`_RAnalysis/run_all.R` sources scripts 01 to 21 in this order. Files named `lib_*.R` hold shared definitions and
 produce no output: `lib_theme.R` (house style and gait factor levels), `lib_format.R` (table
 formatters), `lib_gam_crossing.R` (the single crossover-speed model), `lib_phase_register.R`
 (Hilbert phase registration), `lib_hodograph.R` (closed-velocity-loop geometry: signed area, the
@@ -132,8 +131,8 @@ crossover reader on monotone, non-monotone and exact-hit curves. Run it by hand
 | Fig. S5 | `SFig_MeanTraces_Accel.png` | 17 |
 | Fig. S6 | `SFig_MeanTraces_Decel.png` | 17 |
 
-The manuscript embeds the PNG; each script also writes a `cairo_pdf` companion of the same name
-for submission. Figure numbers are not written into script names or into the figures themselves,
+Each script writes its figure as a PNG and as a `cairo_pdf` companion of the same name. Figure
+numbers are not written into script names or into the figures themselves,
 so a renumbering touches the captions and this table only.
 
 | Table | Script | Artifact |
@@ -147,19 +146,20 @@ so a renumbering touches the captions and this table only.
 
 ## Two output directories
 
-`_RAnalysis/output/` holds only what the paper reports. Every file in it is either a figure the
-manuscript embeds or an artifact behind a reported value. Seven
+`_RAnalysis/output/` holds only what the paper reports. Every file in it is either a figure in
+the paper or an artifact behind a reported value. Seven
 files reach the paper less directly, and are listed here so that nothing in this directory is
 unaccounted for:
 
 - `meanTraces_R.csv` and `meanTraces_annot_R.csv` are the plotted mean traces behind Figs. 7, S5
   and S6, and `speedbin_thresholds_R.csv` is the median-speed split those figures and Fig. 5
   share. They are figure source data rather than reported values.
-- `GaitClassification_Tables.xlsx` and `GaitSummary_FourCell.xlsx` are cited in the numbers
-  reference by sheet, as `xlsx T1` and `xlsx T_Steady`, not by filename.
+- `GaitClassification_Tables.xlsx` and `GaitSummary_FourCell.xlsx` gather the tables of scripts
+  19 and 20 as workbook sheets.
 - `GaitSummary_FourCell_Unsteady_cellN.csv` gives the per-measure denominator behind each cell of
   Table S4, which is what shows that only leg stiffness has an n below the cell count.
-- `steadiness_by_gait.csv` is read by script 22 to build the per-gait steady counts it reports.
+- `steadiness_by_gait.csv` gives the number of decelerating, steady and accelerating steps in
+  each gait.
 
 `_RAnalysis/output_internal/` holds products that are not reported. The leg-stiffness group is the
 larger part of it: `kleg_speed_rank.csv`, `kleg_speed_bins.csv`,
@@ -181,8 +181,7 @@ package's two labelled tidy tables as script 21 writes them outside a deposit bu
 ## Figure sizes
 
 Every figure is exported at the width it is printed at, single column 88 mm or double column
-183 mm, within a 210 mm height bound, as a vector PDF for the journal and a 300 dpi PNG for the
-built manuscript. `bio_save()` in `lib_theme.R` writes both and refuses a canvas outside those
+183 mm, within a 210 mm height bound, as a vector PDF and a 300 dpi PNG. `bio_save()` in `lib_theme.R` writes both and refuses a canvas outside those
 bounds; `BIO_W1`, `BIO_W2`, `BIO_HMAX`, `BIO_BASE` and `BIO_TAG` beside it are the specification,
 and `theme_bio()` sets Arial at 8 pt with 12 pt bold capital panel tags.
 

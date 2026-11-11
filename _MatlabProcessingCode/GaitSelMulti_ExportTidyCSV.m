@@ -213,7 +213,7 @@ function X = addLegStiffness(X, g)
 %
 %   Steps whose inverted compression is non-physical (dL <= 0, or more than 0.4 L0) get
 %   NaN rather than a meaningless ratio. The surviving per-step distribution is
-%   right-skewed, so summaries use median and interquartile range (R 22_table_gait4_summary).
+%   right-skewed, so summaries use median and interquartile range (R 20_table_gait4_summary).
 %
 %   Leg stiffness is a MODEL-BOUND descriptor: it exists only relative to the spring-mass
 %   template it is derived from, and where two limbs share the net force in double support

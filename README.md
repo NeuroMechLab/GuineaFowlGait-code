@@ -17,8 +17,9 @@ hodograph rotation sense characterizes the walking-to-running continuum in guine
 **Data:** the recordings and the processed per-step and per-stride tables are archived on Dryad at
 doi:10.5061/dryad.7m0cfxqc4. This repository is the code; the Dryad package is the data. Neither
 contains the other, and the section below says how they meet. This release runs from the current
-version of the package, which corrects the sign of the horizontal ground reaction force in
-77 trials; the package README's Version History describes the correction.
+version of the package, which corrects the sign of the medio-lateral ground reaction force in
+74 trials and of the fore-aft force in 4; the package README's Version History describes the
+correction.
 
 **Version:** `v1.3.1`, cut from the working repository at commit
 `456eae52b3d0f95ae1d8b9bcf1a4889894b03ec3`. This repository keeps its revision history
@@ -46,18 +47,12 @@ looks for the output file that carries it, and `PIPELINE.md` says which script w
 - `GaitSel_DryadPackage_AllGF/README.md` the data package's own documentation: every file, every
   column, the units and the selection criteria. The data itself is on Dryad, not here.
 
-This repository is the analysis code. The manuscript's own scaffolding lives with the manuscript
-and is not here: the source, the bibliography and citation style, the build and prose-checking
-scripts, the journal formatting filters, and the per-number provenance table. None of it bears on
-how the science was computed, which is what `PIPELINE.md` and the two script directories set out.
-
 ## Requirements
 
 MATLAB R2019b or later, with the Statistics, Signal Processing and Curve Fitting toolboxes. R
 4.6.0, with `dplyr`, `tidyr`, `ggplot2`, `patchwork`, `readr`, `mgcv`, `cluster`, `openxlsx` and
 `knitr`; `systemfonts` is used if present and skipped if not, to pick up the figures' typeface.
-Building the manuscript additionally needs pandoc 3 or later, and a TeX installation with
-`xelatex` for the PDF. The pipeline as reported was run on macOS with MATLAB R2025b and R 4.6.0.
+The pipeline as reported was run on macOS with MATLAB R2025b and R 4.6.0.
 
 `PIPELINE.md` is where this list is maintained; if the two ever disagree, that file is the one
 kept current.
@@ -110,7 +105,7 @@ an `analysisSample` flag that reproduces exactly that set, which is how a reader
 sample without rerunning the gate.
 
 The paper reports 2580 steps and 944 strides, computed from the earlier version of the
-package, before the horizontal force correction. The package README's Version History lists how
+package, before the medio-lateral force sign correction. The package README's Version History lists how
 the reported values change with the corrected data; none of the paper's claims changes.
 
 ## Conventions

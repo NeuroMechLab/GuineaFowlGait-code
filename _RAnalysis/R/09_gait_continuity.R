@@ -173,7 +173,7 @@ by_gait <- data.frame(gait = as.character(d$gaitObjective), agree = clus_pend ==
   summarise(n_steps = dplyr::n(), agree_pct = sprintf("%.1f", 100 * mean(agree)), .groups = "drop")
 readr::write_csv(by_gait, "output/pam_rotation_agreement_by_gait.csv")
 
-# names kept for the summary line and the numbers reference
+# names kept for the summary line
 n <- gr$n; po <- gr$po; kappa <- gr$kappa; kappa_hw <- gr$kappa_hw; phi <- gr$phi
 
 # ---- (2) PCA on the same standardized matrix (independent of PAM) ----------------------

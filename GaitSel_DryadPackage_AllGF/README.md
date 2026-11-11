@@ -7,7 +7,7 @@ Data and code associated with the paper: **"A velocity-loop view of avian gait: 
 
 ## Version
 
-This version corrects the right and left foot-marker labels in 40 trials, where they were swapped in the original captures, and updates this README for further use of the data: it corrects the description of the coordinate frame and states the aerial-phase criterion and the definition of the collision fraction. These updates change no step, stride, measure or result reported in the associated paper. Version 2 corrected the sign of the horizontal ground reaction force in 77 trials; the values the paper reports, computed from the first version, change slightly, and none of its claims changes. Version History, below, describes both versions.
+This version corrects the right and left foot-marker labels in 40 trials, where they were swapped in the original captures, and updates this README for further use of the data: it corrects the description of the coordinate frame and states the aerial-phase criterion and the definition of the collision fraction. These updates change no step, stride, measure or result reported in the associated paper. Version 2 corrected the sign of the medio-lateral ground reaction force in 74 trials and of the fore-aft force in 4; the values the paper reports, computed from the first version, change slightly, and none of its claims changes. Version History, below, describes both versions.
 
 ## Overview
 
@@ -510,9 +510,9 @@ The side labels of the foot tracks (`footR_*`, `footL_*`; `footR_m`, `footL_m` i
 
 This version also updates the README for further use of the data. It corrects the description of the coordinate frame (medio-lateral is positive to the bird's left), states the aerial-phase criterion behind `hasFlight` and the definition of `collisionFraction`, and cites code release v1.3.1, whose re-run writes its output outside this package.
 
-### Version 2: horizontal force sign correction
+### Version 2: medio-lateral force sign correction
 
-Version 2 corrected two errors in the sign of the horizontal ground reaction force (`F_ml_N`, `F_fa_N`; `GRF_N` in the .mat files).
+Version 2 corrected two errors in the sign of the ground reaction force (`F_ml_N`, `F_fa_N`; `GRF_N` in the .mat files).
 
 * Medio-lateral force, in all 74 trials recorded on 2008-11-20, 2008-11-21, 2009-11-17, 2009-11-18, 2009-11-19. In these sessions the force plates were turned 180 degrees relative to the motion-capture frame, and the medio-lateral axis had been given the orientation of the other sessions.
 * Fore-aft force, in 4 trials whose own sign fit disagreed with the other trials of their collection date: `rvc_red_20081120_L00cm_0006`, `surf_noc_20120626_LE0cm_0003`, `surf_red_20120625_LE0cm_0004`, `surf_yel_20120627_LE0cm_0009`. `rvc_red_20081120_L00cm_0006` is one of the four `rvc_red` trials of 2008-11-20 whose force and marker files come from different recordings; its sign follows the other trials of that date, and none of those four trials has a step in the analysis sample.
